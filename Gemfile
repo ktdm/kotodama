@@ -3,9 +3,10 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.1'
 
 gem 'heroku'
+gem 'rb-readline'
 
 group :production do
-  gem 'thin
+  gem 'thin'
 end
 
 # Bundle edge Rails instead:
