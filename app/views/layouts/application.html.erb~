@@ -9,8 +9,10 @@
 <%= yield :head %>
 </head>
 <body onload="init();<%= yield :onload %>">
+<%- unless @showntype=="editor" -%>
 <%= render "home/login" %>
 <%= render "home/interface" %>
+<%- end -%>
 <%= yield %>
 </body>
 </html>
