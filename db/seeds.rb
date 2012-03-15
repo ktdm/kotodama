@@ -8,23 +8,31 @@
 
 #Add Mediatype mediatype to media
 Media.delete_all
-ActiveRecord::Base.connection.execute "UPDATE sqlite_sequence SET seq=0 WHERE name='media';"
+case ActiveRecord::Base.connection.adapter_name
+when 'SQLite'
+  ActiveRecord::Base.connection.execute "UPDATE sqlite_sequence SET seq=0 WHERE name='media';"
+when 'PostgreSQL'
+  ActiveRecord::Base.connection.reset_pk_sequence!(table_name)
+else
+  raise "Task not implemented for this DB adapter"
+end
+
 Media.create(:title => "mediatype", :mtype => "Mediatype", :info => "Mediatype mediatype.")
-Media.create(:title => "editor", :mtype => "Editor", :info => "Mediatype editor.")
+Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype editor.")
+#Media.create(:title => "editor", :mtype => "Mediatype", :info => "Editor mediatype.")
+#Media.create(:title => "editeditor", :mtype => "Editor", :info => "Editor editor.")
 
 #Create tables
 class SeedTables
   def self.create(table, fields)
+    ActiveRecord::Base.connection.drop_table(table)
+    ActiveRecord::Base.connection.create_table(table)
     fields.each do |field, type|
       ActiveRecord::Base.connection.add_column(table, field, type)
     end
   end
 end
 
-ActiveRecord::Base.connection.drop_table(:mediatypes)
-ActiveRecord::Base.connection.create_table(:mediatypes)
-ActiveRecord::Base.connection.drop_table(:editors)
-ActiveRecord::Base.connection.create_table(:editors)
 SeedTables.create( :mediatypes, { :media_id => :integer, :signature => :text } )
 SeedTables.create( :editors, { :media_id => :integer, :mtype => :integer } )
 #(You can use "pragma table_info(tableName)" in sqlite3 'as' schema.rb)
@@ -36,10 +44,11 @@ class Mediatypes < ActiveRecord::Base
 end
 
 Mediatypes.create(:media_id => 1, :signature => ["signature" => "text"])
-Mediatypes.create(:media_id => 2, :signature => ["mtype" => "integer"])
+#Mediatypes.create(:media_id => 3, :signature => ["mtype" => "integer"])
 
 class Editors < ActiveRecord::Base
   establish_connection(:development)
 end
 
 Editors.create(:media_id => 2, :mtype => 1)
+#Editors.create(:media_id => 4, :mtype => 2)
