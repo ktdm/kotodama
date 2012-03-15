@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en-AU" mediatype="mediatype">
+ <head>
+  <title>Show all editors | kotoda.ma</title>
+  <script src="common.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="common.css"/>
+  <link rel="stylesheet" type="text/css" href="fonts.css"/>
+  <link rel="shortcut icon" href="media/favicon.ico" type="image/x-icon"/>
+  <style type="text/css">
+#show_canvas {
+ border-top:1px solid black
+}
+  </style>
+ </head>
+ <body onload="init()">
+
+<!--Login/register section-->
+  <div id="login_box" onmouseover="login_box(true)" onmouseout="login_box(false)" mediatype="login">
+   <span id="login_help">Help text.</span>
+   <a id="login" href="#" onclick="login(true)">Login</a>
+   <a id="logout" href="#" onclick="logout()">Logout</a>
+   <a id="register" href="#" onclick="login(false)">Register</a>
+   <form id="login_form">
+    <input id="username" class="help_text" type="text" size="15" onfocus="inputFocus('username','Username')" onblur="loginObj.username=this.value;inputBlur('username','Username')" onkeypress="enter(this,event)"/>
+    <input id="password" class="help_text" type="text" size="15" onfocus="inputFocus('password','Password')" onblur="loginObj.password=this.value;inputBlur('password','Password')" onkeypress="enter(this,event)"/>
+    <div id="reg_form">
+     <input id="email" class="help_text" type="text" size="20" onfocus="inputFocus('email','Email')" onblur="loginObj.email=this.value;inputBlur('email','Email')" onkeypress="enter(this,event)"/>
+     <div>Capcha</div>
+    </div>
+   </form>
+  </div>
+
+<!--Brand/interface section-->
+  <div class="interface" mediatype="interface">
+   <a href="index.html"><img id="logo" src="media/kotodama_logo_black.jpg"/></a>
+   <input id="input" class="help_text" type="text" value="command or search" size="50" onfocus="inputFocus('input','command or search')" onblur="inputBlur('input','command or search')"/><br/>
+  </div>
+
+<!--Page content section-->
+  <table id="show" class="page">
+   <tr>
+
+    <td id="show_editors" class="left" mediatype="editor">
+     <span class="page_title">'Editor' mediatype summary</span>
+     <table id="editor_type" mediatype="mediatype">
+      <tr>
+       <td id="editor_type_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+       <td id="editor_type_title" class="data">
+        <a href="editeditor.html">Editors</a>
+        <a href="userpage.html">kotoda.ma</a>
+        <span>4 instances</span>
+       </td>
+      </tr>
+      <tr>
+      <td id="editor_desc" colspan="2">
+       <span>Description</span>
+       <span>(<a href="mediatype.html">Mediatype</a>)</span>
+      </td>
+      </tr>
+      <tr>
+       <td class="actions" colspan="2">
+        <a href="discussion.html">Discussion</a>
+        <span class="view">
+         <a href="editmediatype.html">View in mediatype editor</a>
+        </span>
+       </td>
+      </tr>
+     </table>
+
+     <div id="show_canvas">
+      <table id="editor_1">
+       <tr>
+        <td id="editor_1_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+        <td id="editor_1_title" class="data">
+         <a href="editcode.html">editcode</a>
+         <a href="userpage.html">kotoda.ma</a>
+         <span>17 visits</span>
+        </td>
+       <tr>
+        <td id="editor_1_desc" colspan="2">Edit pages</td>
+       </tr>
+       <tr>
+        <td class="actions" colspan="2">
+         <a href="discussion.html">Discussion</a>
+         <span class="view">
+          <a href="editeditor.html">View in editor editor</a>
+         </span>
+        </td>
+       </tr>
+      </table>
+
+      <table id="editor_2">
+       <tr>
+        <td id="editor_2_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+        <td id="editor_2_title" class="data">
+         <a href="editcommand.html">editcommand</a>
+         <a href="userpage.html">kotoda.ma</a>
+         <span>9 visits</span>
+        </td>
+       <tr>
+        <td id="editor_2_desc" colspan="2">Edit commands</td>
+       </tr>
+       <tr>
+        <td class="actions" colspan="2">
+         <a href="discussion.html">Discussion</a>
+         <span class="view">
+          <a href="editeditor.html">View in editor editor</a>
+         </span>
+        </td>
+       </tr>
+      </table>
+
+      <table id="editor_3">
+       <tr>
+        <td id="editor_3_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+        <td id="editor_3_title" class="data">
+         <a href="editmediatype.html">editmediatype</a>
+         <a href="userpage.html">kotoda.ma</a>
+         <span>7 visits</span>
+        </td>
+       </tr>
+       <tr>
+        <td id="editor_3_desc" colspan="2">Edit mediatypes</td>
+       </tr>
+       <tr>
+        <td class="actions" colspan="2">
+         <a href="discussion.html">Discussion</a>
+         <span class="view">
+          <a href="editeditor.html">View in editor editor</a>
+         </span>
+        </td>
+       </tr>
+      </table>
+
+      <table id="editor_4">
+       <tr>
+        <td id="editor_4_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+        <td id="editor_4_title" class="data">
+         <a href="editeditor.html">editeditor</a>
+         <a href="userpage.html">kotoda.ma</a>
+         <span>6 visits</span>
+        </td>
+       <tr>
+        <td id="editor_4_desc" colspan="2">Edit editors</td>
+       </tr>
+       <tr>
+        <td class="actions" colspan="2">
+         <a href="discussion.html">Discussion</a>
+         <span class="view">
+          <a href="editeditor.html">View in editor editor</a>
+         </span>
+        </td>
+       </tr>
+      </table>
+
+     </div>
+    </td>
+
+    <td id="ads" class="right">
+     <table class="ad">
+      <tr>
+       <td>
+        <div class="ad_image">
+         <div class="dummy_ad">
+          <a href="ad.html"><img style="width:55px;height:40px" src="media/kotodama_logo_2.png"/></a>
+         </div>
+        </div>
+       </td>
+      </tr>
+      <tr>
+       <td><a href="ad.html">Want ad space?</a></td>
+      </tr>
+     </table>
+    </td>
+
+   </tr>
+  </table>
+<!--End page content section-->
+
+ </body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-AU" mediatype="page">
+ <head>
+  <title>Discuss 'Example page' | kotoda.ma</title>
+  <script type="text/javascript">
+function toggle_reply(here) {
+ a=$("reply_form_"+here).style.display;
+ $("reply_form_"+here).style.display=a?"":"block";
+ $("reply_"+here).style.display=a?"":"none"
+}
+  </script>
+  <script src="common.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="common.css"/>
+  <link rel="stylesheet" type="text/css" href="fonts.css"/>
+  <link rel="shortcut icon" href="media/favicon.ico" type="image/x-icon"/>
+  <style type="text/css">
+#page {
+ margin-bottom:20px
+}
+#discussion_canvas {
+ border-top:1px solid black;
+ padding-top:10px
+}
+#discussion_canvas>div {
+ margin-left:0px
+}
+  </style>
+ </head>
+ <body onload="init()">
+
+<!--Login/register section-->
+  <div id="login_box" onmouseover="login_box(true)" onmouseout="login_box(false)" mediatype="login">
+   <span id="login_help">Help text.</span>
+   <a id="login" href="#" onclick="login(true)">Login</a>
+   <a id="logout" href="#" onclick="logout()">Logout</a>
+   <a id="register" href="#" onclick="login(false)">Register</a>
+   <form id="login_form">
+    <input id="username" class="help_text" type="text" size="15" onfocus="inputFocus('username','Username')" onblur="loginObj.username=this.value;inputBlur('username','Username')" onkeypress="enter(this,event)"/>
+    <input id="password" class="help_text" type="text" size="15" onfocus="inputFocus('password','Password')" onblur="loginObj.password=this.value;inputBlur('password','Password')" onkeypress="enter(this,event)"/>
+    <div id="reg_form">
+     <input id="email" class="help_text" type="text" size="20" onfocus="inputFocus('email','Email')" onblur="loginObj.email=this.value;inputBlur('email','Email')" onkeypress="enter(this,event)"/>
+     <div>Capcha</div>
+    </div>
+   </form>
+  </div>
+
+<!--Brand/interface section-->
+  <div class="interface" mediatype="interface">
+   <a href="index.html"><img id="logo" src="media/kotodama_logo_black.jpg"/></a>
+   <input id="input" class="help_text" type="text" value="command or search" size="50" onfocus="inputFocus('input','command or search')" onblur="inputBlur('input','command or search')"/><br/>
+  </div>
+
+<!--Discussion section-->
+  <table id="discussion_page" class="page">
+   <tr>
+    <td id="discussion_content" class="left">
+     <span class="page_title">Discussion</span>
+     <table id="page" mediatype="page">
+      <tr>
+       <td id="page_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+       <td id="page_title" class="data">
+        <a href="example.html">Example page</a>
+        <a href="userpage.html">Aidan</a>
+        <span>5 views</span>
+       </td>
+      </tr>
+      <tr>
+       <td id="page_desc" colspan="2">
+        <span>Just a placeholder</span>
+        <span>(<a href="show.html">Page</a>)</span>
+       </td>
+      </tr>
+      <tr>
+       <td class="actions" colspan="2">
+        <span class="view">
+         <a href="editcode.html">View in page editor</a>
+        </span>
+       </td>
+      </tr>
+     </table>
+
+   <!--Discussion comments section-->
+     <div id="discussion_canvas" mediatype="comment">
+
+      <div id="comment_1" class="comment_box">
+       <table class="comment">
+        <tr>
+         <td class="data">
+          <span>259 <a href="#">&#x2195;</a></span>
+          <a href="userpage.html">Aidan</a>
+          <span>3 days ago</span>
+        </tr>
+        <tr>
+         <td>
+          <span>Example comment</span>
+         </td>
+        </tr>
+       </table>
+       <div id="actions_1" class="actions_left">
+        &#x25cb;&ensp;<a href="#" id="reply_1" onclick="toggle_reply(1)">Reply</a>
+        <a href="comment.html">Permalink</a>
+       </div>
+       <form id="reply_form_1" class="reply_form">
+        <textarea></textarea><br/>
+        <a href="#" onclick="toggle_reply(1)">Submit</a>
+        <a href="#" onclick="toggle_reply(1)">Cancel</a>
+       </form>
+
+       <div id="comment_2" class="comment_box">
+        <table class="comment">
+         <tr>
+          <td class="data">
+           <span>37 <a href="#">&#x2195;</a></span>
+           <a href="userpage.html">Author</a>
+           <span>Time</span>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <span>Nested comment</span>
+          </td>
+         </tr>
+        </table>
+        <div id="actions_2" class="actions_left">
+         &#x25cb;&ensp;<a href="#" id="reply_2" onclick="toggle_reply(2)">Reply</a>
+         <a href="comment.html">Permalink</a>
+        </div>
+        <form id="reply_form_2" class="reply_form">
+         <textarea></textarea><br/>
+         <a href="#" onclick="toggle_reply(2)">Submit</a>
+         <a href="#" onclick="toggle_reply(2)">Cancel</a>
+        </form>
+       </div>
+
+      </div>
+
+      <div id="comment_3" class="comment_box">
+       <table class="comment">
+        <tr>
+         <td class="data">
+          <span>191 <a href="#">&#x2195;</a></span>
+          <a href="userpage.html">Author</a>
+          <span>Time</span>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          <span>Comment</span>
+         </td>
+        </tr>
+       </table>
+       <div id="actions_3" class="actions_left">
+        &#x25cb;&ensp;<a href="#" id="reply_3" onclick="toggle_reply(3)">Reply</a>
+        <a href="comment.html">Permalink</a>
+       </div>
+       <form id="reply_form_3" class="reply_form">
+        <textarea></textarea><br/>
+        <a href="#" onclick="toggle_reply(3)">Submit</a>
+        <a href="#" onclick="toggle_reply(3)">Cancel</a>
+       </form>
+      </div>
+
+     </div>
+   <!--end section-->
+
+    </td>
+
+    <td id="ads" class="right">
+     <table class="ad">
+      <tr>
+       <td>
+        <div class="ad_image">
+         <div class="dummy_ad">
+          <a href="ad.html"><img style="width:55px;height:40px" src="media/kotodama_logo_2.png"/></a>
+         </div>
+        </div>
+       </td>
+      </tr>
+      <tr>
+       <td><a href="ad.html">Want ad space?</a></td>
+      </tr>
+     </table>
+    </td>
+
+   </tr>
+  </table>
+<!--end section-->
+
+ </body>
+</html>

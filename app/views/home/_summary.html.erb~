@@ -1,0 +1,21 @@
+   <table id="page_1" mediatype="page">
+    <tr>
+     <td id="page_1_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+     <td id="page_1_title" class="data">
+      <a href="example.html"><%= :title %></a>
+      <a href="userpage.html"><%= :author %></a>
+      <span><%= :views %> views</span>
+     </td>
+    </tr>
+    <tr>
+     <td id="page_1_desc" colspan="2"><%= :info %></td>
+    </tr>
+    <tr>
+     <td class="actions" colspan="2">
+      <a href="discussion.html">Discussion</a>
+      <span class="view">
+       <a href="pages/1/edit">View in page editor</a>
+      </span>
+     </td>
+    </tr>
+   </table>

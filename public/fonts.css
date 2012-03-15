@@ -1,0 +1,34 @@
+@font-face {
+ font-family: "ProximaNova";
+ src: url("media/ProximaNova-Regular.otf") format("opentype");
+ font-style:normal;
+ font-weight:normal
+}
+
+@font-face {
+ font-family: "Constantia";
+ src: url("media/Constantia-Regular.ttf") format("truetype");
+ font-style:normal;
+ font-weight:normal
+}
+/*
+@font-face {
+ font-family: "Skolar";
+ src: url("media/Skolar Cyrillic Regular.otf") format("opentype");
+ font-style:normal;
+ font-weight:normal
+}
+
+@font-face {
+ font-family: "Lora";
+ src: url("media/Lora-Regular.ttf") format("truetype");
+ font-style:normal;
+ font-weight:normal
+}
+
+@font-face {
+ font-family: "Actor";
+ src: url("media/Actor-Regular.ttf") format("truetype");
+ font-style:normal;
+ font-weight:normal
+}*/

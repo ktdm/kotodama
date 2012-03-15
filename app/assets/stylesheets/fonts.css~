@@ -1,0 +1,13 @@
+@font-face {
+ font-family: "ProximaNova";
+ src: url(<%= "ProximaNova-Regular.otf" %>) format("opentype");
+ font-style:normal;
+ font-weight:normal
+}
+
+@font-face {
+ font-family: "Constantia";
+ src: url(<%= "Constantia-Regular.ttf" %>) format("truetype");
+ font-style:normal;
+ font-weight:normal
+}

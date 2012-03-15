@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en-AU" mediatype="ad">
+ <head>
+  <title>Advertise | kotoda.ma</title>
+  <script src="common.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="common.css"/>
+  <link rel="stylesheet" type="text/css" href="fonts.css"/>
+  <link rel="shortcut icon" href="media/favicon.ico" type="image/x-icon"/>
+ </head>
+ <body onload="init()">
+
+<!--Login/register section-->
+  <div id="login_box" onmouseover="login_box(true)" onmouseout="login_box(false)" mediatype="login">
+   <span id="login_help">Help text.</span>
+   <a id="login" href="#" onclick="login(true)">Login</a>
+   <a id="logout" href="#" onclick="logout()">Logout</a>
+   <a id="register" href="#" onclick="login(false)">Register</a>
+   <form id="login_form">
+    <input id="username" class="help_text" type="text" size="15" onfocus="inputFocus('username','Username')" onblur="loginObj.username=this.value;inputBlur('username','Username')" onkeypress="enter(this,event)"/>
+    <input id="password" class="help_text" type="text" size="15" onfocus="inputFocus('password','Password')" onblur="loginObj.password=this.value;inputBlur('password','Password')" onkeypress="enter(this,event)"/>
+    <div id="reg_form">
+     <input id="email" class="help_text" type="text" size="20" onfocus="inputFocus('email','Email')" onblur="loginObj.email=this.value;inputBlur('email','Email')" onkeypress="enter(this,event)"/>
+     <div>Capcha</div>
+    </div>
+   </form>
+  </div>
+
+<!--Brand/interface section-->
+  <div class="interface" mediatype="interface">
+   <a href="index.html"><img id="logo" src="media/kotodama_logo_black.jpg"/></a>
+   <input id="input" class="help_text" type="text" value="command or search" size="50" onfocus="inputFocus('input','command or search')" onblur="inputBlur('input','command or search')"/><br/>
+  </div>
+
+  <div id="ad_content" class="page">
+   <span style="padding:20px" class="section_title">Ad goes here</span>
+  </div>
+
+ </body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en-AU" mediatype="comment">
+ <head>
+  <title>Show Aidan's comment discussing 'Example page' | kotoda.ma</title>
+  <script src="common.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="common.css"/>
+  <link rel="stylesheet" type="text/css" href="fonts.css"/>
+  <link rel="shortcut icon" href="media/favicon.ico" type="image/x-icon"/>
+  <style type="text/css">
+.comment_box {
+ border-top:1px solid black;
+ padding-top:10px
+}
+  </style>
+ </head>
+ <body onload="init()">
+
+<!--Login/register section-->
+  <div id="login_box" onmouseover="login_box(true)" onmouseout="login_box(false)" mediatype="login">
+   <span id="login_help">Help text.</span>
+   <a id="login" href="#" onclick="login(true)">Login</a>
+   <a id="logout" href="#" onclick="logout()">Logout</a>
+   <a id="register" href="#" onclick="login(false)">Register</a>
+   <form id="login_form">
+    <input id="username" class="help_text" type="text" size="15" onfocus="inputFocus('username','Username')" onblur="loginObj.username=this.value;inputBlur('username','Username')" onkeypress="enter(this,event)"/>
+    <input id="password" class="help_text" type="text" size="15" onfocus="inputFocus('password','Password')" onblur="loginObj.password=this.value;inputBlur('password','Password')" onkeypress="enter(this,event)"/>
+    <div id="reg_form">
+     <input id="email" class="help_text" type="text" size="20" onfocus="inputFocus('email','Email')" onblur="loginObj.email=this.value;inputBlur('email','Email')" onkeypress="enter(this,event)"/>
+     <div>Capcha</div>
+    </div>
+   </form>
+  </div>
+
+<!--Brand/interface section-->
+  <div class="interface" mediatype="interface">
+   <a href="index.html"><img id="logo" src="media/kotodama_logo_black.jpg"/></a>
+   <input id="input" class="help_text" type="text" value="command or search" size="50" onfocus="inputFocus('input','command or search')" onblur="inputBlur('input','command or search')"/><br/>
+  </div>
+
+<!--Comment section-->
+  <table id="comment_page" class="page">
+   <tr>
+
+    <td id="comment_content" class="left">
+     <div class="page_title">Comment summary</div>
+     <table style="margin-bottom:15px">
+      <tr>
+       <td id="page_title" class="data">
+        <a href="example.html">Example Page</a>
+        <a href="userpage.html">Aidan</a>
+       </td>
+       <td class="actions">
+        <a href="discussion.html">Discussion</a>
+       </td>
+      </tr>
+     </table>
+     <div id="comment" class="comment_box" mediatype="comment">
+      <table class="comment">
+       <tr>
+        <td class="data">
+         <span>259 <a href="#">&#x2195;</a></span>
+         <a href="userpage.html">Aidan</a>
+         <span>3 days ago</span>
+        </tr>
+       <tr>
+        <td>
+         <span>Example comment</span>
+        </td>
+       </tr>
+      </table>
+      <div id="actions" class="actions_left">
+       &#x25cb;&ensp;<a href="#" id="reply" onclick="toggle('reply_form','reply')">Reply</a>
+      </div>
+      <form id="reply_form" class="reply_form">
+       <textarea></textarea><br/>
+       <a href="#" onclick="toggle('reply_form','reply')">Submit</a>
+       <a href="#" onclick="toggle('reply_form','reply')">Cancel</a>
+      </form>
+     </div>
+    </td>
+
+    <td id="ads" class="right">
+     <table class="ad">
+      <tr>
+       <td>
+        <div class="ad_image">
+         <div class="dummy_ad">
+          <a href="ad.html"><img style="width:55px;height:40px" src="media/kotodama_logo_2.png"/></a>
+         </div>
+        </div>
+       </td>
+      </tr>
+      <tr>
+       <td><a href="ad.html">Want ad space?</a></td>
+      </tr>
+     </table>
+    </td>
+
+   </tr>
+  </table>
+<!--end section-->
+
+ </body>
+</html>

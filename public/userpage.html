@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en-AU" mediatype="account">
+ <head>
+  <title>Show Aidan's info | kotoda.ma</title>
+  <script src="common.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="common.css"/>
+  <link rel="stylesheet" type="text/css" href="fonts.css"/>
+  <link rel="shortcut icon" href="media/favicon.ico" type="image/x-icon"/>
+  <style type="text/css">
+#user_info {
+ padding:20px 20px 0px 20px
+}
+#user_field li {
+ padding:10px
+}
+  </style>
+ </head>
+ <body onload="init()">
+
+<!--Login/register section-->
+  <div id="login_box" onmouseover="login_box(true)" onmouseout="login_box(false)" mediatype="login">
+   <span id="login_help">Help text.</span>
+   <a id="login" href="#" onclick="login(true)">Login</a>
+   <a id="logout" href="#" onclick="logout()">Logout</a>
+   <a id="register" href="#" onclick="login(false)">Register</a>
+   <form id="login_form">
+    <input id="username" class="help_text" type="text" size="15" onfocus="inputFocus('username','Username')" onblur="loginObj.username=this.value;inputBlur('username','Username')" onkeypress="enter(this,event)"/>
+    <input id="password" class="help_text" type="text" size="15" onfocus="inputFocus('password','Password')" onblur="loginObj.password=this.value;inputBlur('password','Password')" onkeypress="enter(this,event)"/>
+    <div id="reg_form">
+     <input id="email" class="help_text" type="text" size="20" onfocus="inputFocus('email','Email')" onblur="loginObj.email=this.value;inputBlur('email','Email')" onkeypress="enter(this,event)"/>
+     <div>Capcha</div>
+    </div>
+   </form>
+  </div>
+
+<!--Brand/interface section-->
+  <div class="interface" mediatype="interface">
+   <a href="index.html"><img id="logo" src="media/kotodama_logo_black.jpg"/></a>
+   <input id="input" class="help_text" type="text" value="command or search" size="50" onfocus="inputFocus('input','command or search')" onblur="inputBlur('input','command or search')"/><br/>
+  </div>
+
+<!--User page section-->
+  <table id="user_page" class="page">
+   <tr>
+    <td id="user_content" class="left">
+     <span class="page_title">User summary</span>
+     <table id="user" mediatype="account">
+      <tr>
+       <td id="user_thumb" class="thumb" rowspan="3"><a href="media/example.jpg">Thumbnail</a></td>
+       <td id="user_handle" class="data">
+        <span>Aidan</span>
+        <span>44 views</span>
+       </td>
+      </tr>
+      <tr>
+       <td id="page_desc" colspan="2">
+        <span>Founder of kotoda.ma</span>
+        <span>(<a href="show_accounts.html">User</a>)</td>
+      </tr>
+      <tr>
+       <td class="actions" colspan="2">
+        <a href="#">Wall</a>
+        <span class="view">
+         <a href="#">View in account editor</a>
+        </span>
+       </td>
+      </tr>
+     </table>
+
+   <!--User data section-->
+     <div id="user_fields">
+
+      <div id="user_info">
+       <div id="user_account_age">
+        <span>User for</span>
+        <span>9 days</span>
+       </div>
+       <div id="user_country">
+        <span>Country</span>
+        <span>Australia</span>
+       </div>
+       <div id="user_age">
+        <span>Age</span>
+        <span>27</span>
+       </div>
+       <div id="user_email">
+        <span>Email</span>
+        <span>aidan.hamwood@gmail.com</span>
+       </div>
+       <div id="user_friends">
+        <span>Friends with</span>
+        <ul class="command_list">
+         <li><a href="userpage.html">Other</a></li>
+         <li><a href="userpage.html">Users</a></li>
+        </ul>
+       </div>
+      </div>
+
+      <div id="user_work" class="show">
+       <div class="section_title">Work</div>
+
+       <a href="show.html">Pages</a><br/>
+       <table id="page_1" mediatype="page">
+        <tr>
+         <td id="page_1_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+         <td id="page_1_title" class="data">
+          <a href="example.html">Example page</a>
+          <span>5 views</span>
+         </td>
+        <tr>
+         <td id="page_1_desc" colspan="2">Just a placeholder</td>
+        </tr>
+        <tr>
+         <td class="actions" colspan="2">
+          <a href="discussion.html">Discussion</a>
+          <span class="view">
+           <a href="editcode.html">View in page editor</a>
+          </span>
+         </td>
+        </tr>
+       </table>
+
+       <a href="#">Images</a>
+
+       <table id="image_1" mediatype="image">
+        <tr>
+         <td id="image_1_thumb" class="thumb" rowspan="3"><a href="media/example.jpg">Thumbnail</a></td>
+         <td id="image_1_title" class="data">
+          <a href="media/example.jpg">Example image</a>
+          <span>7 views</span>
+         </td>
+        <tr>
+         <td id="image_1_desc" colspan="2">Another placeholder</td>
+        </tr>
+        <tr>
+         <td class="actions" colspan="2">
+          <a href="discussion.html">Discussion</a>
+         </td>
+        </tr>
+       </table>
+
+      </div>
+
+     </div>
+   <!--end section-->
+
+    </td>
+
+    <td id="ads" class="right">
+     <table class="ad">
+      <tr>
+       <td>
+        <div class="ad_image">
+         <div class="dummy_ad">
+          <a href="ad.html"><img style="width:55px;height:40px" src="media/kotodama_logo_2.png"/></a>
+         </div>
+        </div>
+       </td>
+      </tr>
+      <tr>
+       <td><a href="ad.html">Want ad space?</a></td>
+      </tr>
+     </table>
+    </td>
+
+   </tr>
+  </table>
+<!--end section-->
+
+ </body>
+</html>

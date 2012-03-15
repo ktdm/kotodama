@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en-AU" mediatype="editor">
+ <head>
+  <title>Edit new editor | kotoda.ma</title>
+  <script type="text/javascript">
+var eddisp={
+ frames:["editor_code_frame","editor_forms_frame","editor_result_frame"],
+ menu:["Convert","Forms","Render"],
+ display:["block","block","block"],
+ finalfunc:function(a){$("forms_menu").style.display=(a==="Forms"?"block":"none")}
+},
+subframes={ids:[],panels:[]},
+lists={
+ forms_list: {
+  insfunc: function() {
+   var d,i,n=0,r;
+   for (i=0;i<this.actions.length;i++) {
+    d=this.actions[i].firstChild.id;
+    n=Math.max(n,parseFloat(d.slice(5))) //avoid collisions
+   }
+   n++;
+   this.target.appendChild($("form_stamp").cloneNode(true)).setAttribute("id",r="form_"+n);
+   $(r).childNodes[1].childNodes[1].innerHTML=this.insname;
+   $(r).style.display="table";
+   subframes.ids.push(r);
+   subframes.panels.push([$(r).childNodes[5].id="form_result_"+n,$(r).childNodes[3].id="form_code_"+n]);
+  }
+ },
+ menu_items_1: {
+  insfunc: function() {
+   var a=this.target.appendChild(document.createElement("a"));
+   a.href="#";
+   a.innerHTML=this.insname;
+   a.onclick=ref;
+  }
+ }
+};
+
+function ref(){alert('blegh');return false}/*
+function ren(e) { //D:
+l="menu_items_1";
+ if (e instanceof Event) {
+  var b=this.parentNode.appendChild($("ins").cloneNode(true)),ret;
+  b.id="ren";
+//alert(this.parentNode.childNodes.indexOf(this))
+//  b.onblur=new Function("ren($('menu_items_"+1+"').childNodes["+this.parentNode.childNodes.indexOf(this)+"])");
+//  b.onblur=ren.call(this);
+b.onblur=function(e){ren(e.target.value)};
+  b.onkeypress=function(e){if (e.which===13) this.blur()};
+  b.style.textAlign="right";
+  b.value=lists[l].actions.typelabel;
+  inputFocus("ren",lists[l].actions.typelabel);
+  b.value=this.parentNode.firstChild.innerHTML;
+  b.previousSibling.style.display="none";
+  b.focus();
+ }
+ else {/*
+  e.innerHTML=(x=e.parentNode).lastChild.value;
+  e.style.display="";
+  x.removeChild(x.lastChild);*\
+  (x=$(l)).firstChild.text=e;
+  x.firstChild.style.display="";
+  x.removeChild(x.lastChild);
+ }
+ return false;
+}
+*/
+function toggle_list(it) {
+ var li,x,y,z,items;
+ if ((li=it.parentNode).style.backgroundColor==="orange") return true;
+ items=li.parentNode.getElementsByTagName("li");
+ li.style.backgroundColor="orange";
+ items[(li===items[0])?1:0].style.backgroundColor="transparent";
+ for (var n=li;n;n=n.parentNode) if ((x=subframes.ids.indexOf(n.id))!==-1) break;
+ y=($((z=subframes.panels[x])[0]).style.display==="none");
+ $(z[0]).style.display=y?"":"none";
+ $(z[1]).style.display=y?"none":"";
+ if (y) $(z[0]).innerHTML=$(z[1]).value;
+}
+  </script>
+  <script src="common.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="common.css"/>
+  <link rel="stylesheet" type="text/css" href="fonts.css"/>
+  <link rel="shortcut icon" href="media/favicon.ico" type="image/x-icon"/>
+  <style type="text/css">
+#forms_menu {
+ display:none;
+ float:right;
+ border-right:1px solid black;
+ margin-right:20px
+}
+ul * {
+ margin:0px;
+ outline:none
+}
+ul {
+ margin:0px
+}
+#editor_editor_menu {
+ float:right
+}
+.navlist {
+ display:table-cell;
+ height:100%;
+ width:20%;
+ vertical-align:top;
+ text-align:right;
+ padding-right:10px;
+ margin-right:0px
+}
+.navlist>div,.navlist>ul>li {
+ padding:0px 5px 0px 5px
+}
+.navlist>* {
+ padding:5px 0px 5px 0px
+}
+#forms_list {
+ max-height:100%;
+ overflow:auto
+}
+#forms_list>li>* {
+ display:table;
+ height:80%;
+ width:60%
+}
+.page {
+ margin-bottom:0px;
+}
+.bottom {
+ padding:5px
+}
+.bottom>div,#forms_list,#forms_list>li {
+ height:100%;
+ width:100%
+}
+.editor_window {
+ display:table-cell
+}
+  </style>
+ </head>
+ <body onload="init()">
+
+<!--Login/register section-->
+  <div id="login_box" onmouseover="login_box(true)" onmouseout="login_box(false)" mediatype="login">
+   <span id="login_help">Help text.</span>
+   <a id="login" href="#" onclick="login(true)">Login</a>
+   <a id="logout" href="#" onclick="logout()">Logout</a>
+   <a id="register" href="#" onclick="login(false)">Register</a>
+   <form id="login_form">
+    <input id="username" class="help_text" type="text" size="15" onfocus="inputFocus('username','Username')" onblur="loginObj.username=this.value;inputBlur('username','Username')" onkeypress="enter(this,event)"/>
+    <input id="password" class="help_text" type="text" size="15" onfocus="inputFocus('password','Password')" onblur="loginObj.password=this.value;inputBlur('password','Password')" onkeypress="enter(this,event)"/>
+    <div id="reg_form">
+     <input id="email" class="help_text" type="text" size="20" onfocus="inputFocus('email','Email')" onblur="loginObj.email=this.value;inputBlur('email','Email')" onkeypress="enter(this,event)"/>
+     <div>Capcha</div>
+    </div>
+   </form>
+  </div>
+
+  <table class="page">
+   <tr>
+
+<!--Brand/interface section-->
+    <td class="interface" mediatype="interface">
+     <a href="home.html"><img id="logo" src="media/kotodama_logo_black.jpg"/></a>
+     <input id="input" class="help_text" type="text" value="command or search" size="50" onfocus="inputFocus('input','command or search')" onblur="inputBlur('input','command or search')"/><br/>
+    </td>
+
+   </tr>
+
+<!--Code editor section-->
+   <tr>
+    <td id="editor_editor_actions" class="top">
+     <span class="section_title"
+      >Editor: <a id="title" href="example.html" onmousedown="if (event.which===1) stringedit(this,true);return false">Example page</a
+      ><input class="hide" type="text" onkeypress="if (event.which===13) stringedit(this,false)" onblur="if (this.value!=='') stringedit(this,false)"/>
+     </span>
+     <span class="section_info">
+      <span onclick="textedit(this,true)">Info</span
+      ><div class="dropdown hide">
+       <textarea onkeypress="if (event.which===13&&!event.shiftKey) {textedit(this.parentNode,false);return false}" onblur="if ((p=this.parentNode).style.display!=='none') textedit(p,false)">Something!</textarea
+      ></div>
+     </span>
+     <div id="editor_editor_menu" class="actions">
+      <a href="#">Save</a>
+      <a href="#">New</a>
+      <a href="#" onclick="toggle_frames(this.firstChild.data)">Convert</a>
+      <a href="#" onclick="toggle_frames(this.firstChild.data)">Forms</a>
+      <a href="#" onclick="toggle_frames(this.firstChild.data)">Render</a>
+     </div>
+     <div id="forms_menu" class="actions">
+      <a href="#" onclick="ins.call($('forms_list'))">Insert</a>
+      <a href="#" onclick="del.call($('forms_list'))">Delete</a>
+      <a href="#">Move</a>
+     </div>
+    </td>
+   </tr>
+   <tr>
+    <td id="editor_editor_canvas" class="bottom">
+
+     <div id="editor_code_frame">
+      <textarea id="code_editor" class="editor_window">function send () {}</textarea>
+     </div>
+
+     <div id="editor_forms_frame">
+      <ul id="forms_list" mediatype="form"></ul>
+     </div>
+
+     <div id="editor_result_frame">
+      <iframe id="editor_result" class="editor_window" src="example.html"></iframe>
+     </div>
+
+    </td>
+   </tr>
+  </table>
+
+  <div id="ins_stamp" class="hide">Insert
+   <input class="help_text" type="text" value="Mediatype" size="20" onkeypress="if (event.which==13) ins.call(this.parentNode.parentNode,this.value)"/>
+  </div>
+
+  <div id="form_stamp" class="hide">
+   <div class="navlist">
+    <div>Title</div>
+    <ul class="hr">
+     <li style="background-color:orange">
+      <a href="#" onclick="toggle_list(this);return false">Form</a>
+     </li>
+     <li>
+      <a href="#" onclick="toggle_list(this);return false">Render<a>
+     </li>
+    </ul>
+    <div class="hr"><a href="#" onmousedown="menu({it:this.parentNode,list:{Insert:ins,Delete:del,Move:location.href}});return false" onclick="return false">Menus</a></div
+    ><ul id="menu_items_1" mediatype="pagefrag"></ul>
+   </div>
+   <textarea class="editor_window"></textarea>
+   <div class="editor_window" style="display:none"></div>
+  </div>
+
+ </body>
+</html>

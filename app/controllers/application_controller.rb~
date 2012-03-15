@@ -1,0 +1,9 @@
+class ApplicationController < ActionController::Base
+  protect_from_forgery
+
+#  before_filter :append_view_paths
+
+#  def append_view_paths
+#    append_view_path Rails.root.join("app/assets/files").to_s
+#  end
+end

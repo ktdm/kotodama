@@ -1,0 +1,27 @@
+@font-face {
+ font-family: "ProximaNova";
+ src: url(<%= asset_path "ProximaNova-Regular.otf" %>) format("opentype");
+ font-style:normal;
+ font-weight:normal
+}
+
+@font-face {
+ font-family: "Constantia";
+ src: url(<%= asset_path "Constantia-Regular.ttf" %>) format("truetype");
+ font-style:normal;
+ font-weight:normal
+}
+
+@font-face {
+ font-family: "Constantia";
+ src: url(<%= asset_path "Constantia-Boldtotf" %>) format("truetype");
+ font-style:normal;
+ font-weight:bold
+}
+
+@font-face {
+ font-family: "Monofur";
+ src: url(<%= asset_path "Monofur-Regular.ttf" %>) format("truetype");
+ font-style:normal;
+ font-weight:normal
+}

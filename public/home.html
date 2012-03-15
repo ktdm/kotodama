@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en-AU" mediatype="kotodama">
+ <head>
+  <title>Home | kotoda.ma</title>
+  <script type="text/javascript">
+if (!document.cookie) window.location="index.html"
+var shown="feed_sitenews";
+var lists={
+ actions_list: {
+  insfunc: function() {
+   this.target.innerHTML="<a href='#' onclick='return false;toggle(shown,shown=\'"+this.insname+"\',null,\'block\')'>"+this.insname+"</a>"
+  }
+ }
+};
+
+function mov(a) {
+ var i,j=new List("actions_list");
+ for (i in j) {
+  if (a&&!j[i].onclick) {
+   j[i].firstChild.style.backgroundColor="orange";
+   j[i].addEventListener('click',movclick,true)
+  }
+  else {
+   j[i].firstChild.style.backgroundColor=null;
+   j[i].removeEventListener('click',movclick,true);
+  }
+ }
+}
+function movclick(e) {
+ this.addEventListener('blur',movdet,true);
+ this.onkeydown=function(e) {
+  var p=this.parentNode;
+  if (this.prev&&e.which==38) p.insertBefore(p.removeChild(this),this.prev);
+  if (this.succ&&e.which==40) p.insertBefore(p.removeChild(this),this.succ.nextSibling);
+  movdet();
+ }
+ mov(false);
+ this.firstChild.onclick=new Function("return false;"+innerFunc(this.firstChild.onclick));
+}
+function movdet() { //buggy...
+ this.onkeydown=null;
+ var j=innerFunc(this.firstChild.onclick);
+ this.firstChild.onclick=new Function(j.slice(j.indexOf(";")+1,-1));
+ this.removeEventListener('blur',movdet,true);
+}
+  </script>
+  <script src="common.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="common.css"/>
+  <link rel="stylesheet" type="text/css" href="fonts.css"/>
+  <link rel="shortcut icon" href="media/favicon.ico" type="image/x-icon"/>
+  <style type="text/css">
+.left {
+ width:20%
+}
+.middle {
+ width:55%;
+ padding:0px 20px 20px 0px
+}
+.middle>div,#ins_stamp {
+ display:none
+}
+#manage_actions {
+ padding-top:15px
+}
+#subs_action,#editors_action {
+ padding:0px
+}
+.action_dropdown {
+ border-bottom:1px solid black;
+ margin:20px;
+ display:none
+}
+/*Feed css*/
+.feed {
+ margin:20px 0px 0px 20px
+}
+.feed_box {
+ margin:20px 0px 0px 20px
+}
+.feed_item {
+ margin:5px 10px 5px 10px
+}
+/*Command list css*/
+.show_commands {
+ padding:20px
+}
+#account_summary {
+ display:none
+}
+  </style>
+ </head>
+ <body onload="init();toggle(shown)">
+
+<!--Login/register section-->
+  <div id="login_box" onmouseover="login_box(true)" onmouseout="login_box(false)" mediatype="login">
+   <span id="login_help">Help text.</span>
+   <a id="login" href="#" onclick="login(true)">Login</a>
+   <a id="logout" href="#" onclick="logout()">Logout</a>
+   <a id="register" href="#" onclick="login(false)">Register</a>
+   <form id="login_form">
+    <input id="username" class="help_text" type="text" size="15" onfocus="inputFocus('username','Username')" onblur="loginObj.username=this.value;inputBlur('username','Username')" onkeypress="enter(this,event)"/>
+    <input id="password" class="help_text" type="text" size="15" onfocus="inputFocus('password','Password')" onblur="loginObj.password=this.value;inputBlur('password','Password')" onkeypress="enter(this,event)"/>
+    <div id="reg_form">
+     <input id="email" class="help_text" type="text" size="20" onfocus="inputFocus('email','Email')" onblur="loginObj.email=this.value;inputBlur('email','Email')" onkeypress="enter(this,event)"/>
+     <div>Capcha</div>
+    </div>
+   </form>
+  </div>
+
+<!--Brand/interface section-->
+  <div class="interface" mediatype="interface">
+   <a href="index.html"><img id="logo" src="media/kotodama_logo_black.jpg"/></a>
+   <input id="input" class="help_text" type="text" value="command or search" size="50" onfocus="inputFocus('input','command or search')" onblur="inputBlur('input','command or search')"/><br/>
+  </div>
+
+<!--Page content section-->
+  <table id="home_page" class="page">
+   <tr>
+
+    <td id="home_actions" class="left">
+     <ul id="actions_list" mediatype="command"> <!--to do:toggle_list this-->
+      <li><a href="#" onclick="toggle(shown,shown='feed_sitenews',null,'block')">Site News</a></li>
+      <li><a href="#" onclick="toggle(shown,shown='feed_home',null,'block')">Home</a></li>
+      <li><a href="#" onclick="toggle(shown,shown='show_work',null,'block')">Work</a></li>
+     </ul>
+     <ul>
+      <li id="manage_actions" class="hr">
+       <a href="#" onmousedown="menu({it:this.parentNode,list:{Insert:ins,Delete:del,Move:function(){mov(true)}}});return false">Commands</a>
+      <li><a href="#" onclick="toggle(shown,shown='account_manager',null,'block')">Account</a></li>
+     </ul>
+    </td>
+
+    <td id="home_feed" class="middle">
+
+   <!--Site news feed section-->
+     <div id="feed_sitenews" class="feed" mediatype="feed">
+      <div class="page_title">Site News</div>
+
+      <div id="feed_sitenews_item_1" class="feed_box">
+       <table class="feed_item">
+        <tr>
+         <td class="data">
+          <span class="section_title">Title</span>
+          <a href="userpage.html">Author</a>
+          <span>Time</span>
+        </tr>
+        <tr>
+         <td>
+          <span>Item body</span>
+         </td>
+        </tr>
+       </table>
+       <div id="feed_sitenews_actions_1" class="actions_left">
+        &#x25cb;&ensp;<a href="discussion.html">Discussion</a>
+       </div>
+      </div>
+
+      <div id="feed_sitenews_item_2" class="feed_box">
+       <table class="feed_item">
+        <tr>
+         <td class="data">
+          <span class="section_title">Title</span>
+          <a href="userpage.html">Author</a>
+          <span>Time</span>
+        </tr>
+        <tr>
+         <td>
+          <span>Item body</span>
+         </td>
+        </tr>
+       </table>
+       <div id="feed_sitenews_actions_2" class="actions_left">
+        &#x25cb;&ensp;<a href="discussion.html">Discussion</a>
+       </div>
+      </div>
+
+     </div>
+   <!--end section-->
+
+   <!--Home feed section-->
+     <div id="feed_home" class="feed" mediatype="feed">
+      <table style="margin:0px">
+       <tr>
+        <td class="page_title">Home</td>
+        <td id="subs_action" class="actions"> <!--to do:[class~=x] attribute selectors-->
+         <a href="#" onclick="toggle('manage_subs','subs_action')">Subscriptions</a>
+        </td>
+       </tr>
+      </table>
+
+      <div id="manage_subs" class="action_dropdown">
+       <a href="#" onclick="toggle('manage_subs','subs_action')">Subscriptions</a>
+        <ul class="command_list">
+         <li id="sub_1"><a href="#">Groups</a></li>
+         <li id="sub_2"><a href="#">Events</a></li>
+        </ul>
+      </div>
+
+      <div id="feed_home_item_1" class="feed_box">
+       <table class="feed_item">
+        <tr>
+         <td class="data">
+          <span class="section_title">Title</span>
+         </td>
+        </tr>
+        <tr>
+         <td>
+          <span>Field</span>
+         </td>
+        </tr>
+       </table>
+       <div id="feed_home_actions_1" class="actions_left">
+        &#x25cb;&ensp;<a href="#">Action</a>
+        <a href="discussion.html">Discussion</a>
+       </div>
+      </div>
+
+     </div>
+   <!--end section-->
+
+   <!--Show works section-->
+     <div id="show_work" class="show">
+      <table style="margin:0px">
+       <tr>
+        <td class="page_title">Work</td>
+        <td id="editors_action" class="actions">
+         <a href="#" onclick="toggle('show_editors')">New...</a>
+        </td>
+       </tr>
+      </table>
+
+      <div id="show_editors" class="action_dropdown">
+
+       <span class="section_title">Mediatypes</span>
+       <table id="page_type" mediatype="mediatype">
+        <tr>
+         <td id="page_type_thumb" class="thumb" rowspan="3"><a href="editcode.html">Thumbnail</a></td>
+         <td id="page_type_title" class="data">
+          <a href="show.html">Pages</a>
+          <a href="userpage.html">kotoda.ma</a>
+          <span>3 instances</span>
+         </td>
+        <tr>
+         <td id="page_type_desc" colspan="2">
+          <span>Description</span>
+          <span>(<a href="mediatype.html">Mediatype</a>)</span>
+         </td>
+        </tr>
+        <tr>
+         <td class="actions" colspan="2">
+          <a href="discussion.html">Discussion</a>
+          <span class="view">
+           <a href="editmediatype.html">View in mediatype editor</a>
+          </span>
+         </td>
+        </tr>
+       </table>
+
+       <table id="command_type" mediatype="mediatype">
+        <tr>
+         <td id="command_type_thumb" class="thumb" rowspan="3"><a href="editcommand.html">Thumbnail</a></td>
+         <td id="command_type_title" class="data">
+          <a href="#">Commands</a>
+          <a href="userpage.html">kotoda.ma</a>
+          <span>3 instances</span>
+         </td>
+        <tr>
+         <td id="command_type_desc" colspan="2">
+          <span>Description</span>
+          <span>(<a href="mediatype.html">Mediatype</a>)</span>
+         </td>
+        </tr>
+        <tr>
+         <td class="actions" colspan="2">
+          <a href="discussion.html">Discussion</a>
+          <span class="view">
+           <a href="editmediatype.html">View in mediatype editor</a>
+          </span>
+         </td>
+        </tr>
+       </table>
+
+      </div>
+
+      <span class="section_title">Pages</span>
+      <table id="page_1" mediatype="page">
+       <tr>
+        <td id="page_1_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+         <td id="page_1_title" class="data">
+         <a href="example.html">Example page</a>
+         <span>5 views</span>
+        </td>
+       <tr>
+        <td id="page_1_desc" colspan="2">
+         <span>Just a placeholder</span>
+         <span>(<a href="show.html">Page</a>)</span>
+        </td>
+       </tr>
+       <tr>
+        <td class="actions" colspan="2">
+         <a href="discussion.html">Discussion</a>
+         <span class="view">
+          <a href="editcode.html">View in page editor</a>
+         </span>
+        </td>
+       </tr>
+      </table>
+
+      <span class="section_title">Images</span>
+      <table id="image_1" mediatype="image">
+       <tr>
+        <td id="image_1_thumb" class="thumb" rowspan="3"><a href="media/example.jpg">Thumbnail</a></td>
+        <td id="image_1_title" class="data">
+         <a href="media/example.jpg">Example image</a>
+         <span>7 views</span>
+        </td>
+       <tr>
+        <td id="image_1_desc" colspan="2">
+         <span>Another placeholder</span>
+         <span>(<a href="#">Image</a>)</span>
+        </td>
+       </tr>
+       <tr>
+        <td class="actions" colspan="2">
+         <a href="discussion.html">Discussion</a>
+        </td>
+       </tr>
+      </table>
+
+     </div>
+   <!--end section-->
+
+   <!--Account section-->
+     <div id="account_manager" class="show">
+
+      <table style="margin:0px">
+       <tr>
+        <td class="page_title">Account</td>
+        <td id="show_summary" class="actions">
+         <a href="#" onclick="toggle('account_summary','show_summary')">Summary</a>
+        </td>
+       </tr>
+      </table>
+
+      <div id="account_summary" class="action_dropdown">
+       <a href="#" onclick="toggle('account_summary','show_summary')">Summary</a>
+       <table id="account" mediatype="account">
+        <tr>
+         <td id="account_thumb" class="thumb" rowspan="3"><a href="media/example.jpg">Thumbnail</a></td>
+         <td id="account_title" class="data">
+          <a href="userpage.html">Aidan</a>
+          <span>44 views</span>
+         </td>
+        <tr>
+         <td id="account_desc" colspan="2">
+          <span>Founder of kotoda.ma</span>
+          <span>(<a href="show_accounts.html">User</a>)</span>
+         </td>
+        </tr>
+        <tr>
+         <td class="actions" colspan="2">
+          <a href="discussion.html">Wall</a>
+         </td>
+        </tr>
+       </table>
+      </div>
+
+      <ul class="command_list">
+       <li id="login_field" mediatype="login"> <!--watch out for id/class collisions-->
+        <div class="data" style="float:left">
+         <a href="#">Login</a>
+         <span>Username</span>
+         <span>Password</span>
+        </div>
+        <div class="actions"> <!--to do:privacy checkbox-->
+          <a href="discussion.html">Discussion</a>
+          <span class="view">
+           <a href="#">View in login editor</a>
+         </span>
+        </div>
+       </li>
+       <li id="email_field" mediatype="email">
+        <div class="data" style="float:left">
+         <a href="#">Email</a>
+         <span>Email address</span>
+        </div>
+        <div class="actions">
+          <a href="discussion.html">Discussion</a>
+          <span class="view">
+           <a href="#">View in email editor</a>
+          <span>
+        </div>
+       </li>
+       <li id="thumbnail_field" mediatype="thumbnail">
+        <div class="data" style="float:left">
+         <div class="thumb"><a href="media/example.jpg">Thumbnail</a></div>
+         <span>Title</span>
+        </div>
+        <div class="actions">
+          <a href="discussion.html">Discussion</a>
+          <span class="view">
+           <a href="#">View in thumbnail editor</a>
+          </span>
+        </div>
+       </li>
+      </ul>
+
+     </div>
+   <!--end section-->
+
+    </td>
+
+    <td id="ads" class="right">
+     <table class="ad">
+      <tr>
+       <td>
+       <div class="ad_image">
+        <div class="dummy_ad">
+         <a href="ad.html"><img style="width:55px;height:40px" src="media/kotodama_logo_2.png"/></a>
+        </div>
+       </div>
+      </td>
+     </tr>
+     <tr>
+      <td><a href="ad.html">Want ad space?</a></td>
+      </tr>
+     </table>
+    </td>
+
+   </tr>
+  </table>
+<!--End page content section-->
+  <li id="ins_stamp">
+   <input class="help_text" type="text" style="width:80%" onkeypress="if (event.which==13) ins.call(this.parentNode.parentNode,this.value)"/>
+  </li>
+
+ </body>
+</html>

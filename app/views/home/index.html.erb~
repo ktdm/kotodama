@@ -1,0 +1,120 @@
+<% content_for :head do -%>
+<script type="text/javascript">
+if (document.cookie) window.location="home.html"
+</script>
+<style type="text/css">
+body {
+ text-align:center
+}
+#logo {
+ width:auto;
+ height:auto;
+ padding:20px
+}
+#showcase_title {
+ padding:0px 0px 0px 20px;
+}
+.body {
+ padding:20px 0px 20px 0px
+}
+.interface {
+ margin:0px
+}
+.page {
+ margin-top:20px
+}
+.left,.right {
+ width:50%
+}
+.data {
+ float:left
+}
+.command_list {
+ margin:20px
+}
+</style>
+<%- end -%>
+<%= render "login" %>
+<%= render "interface" %>
+<table id="index_showcase" class="page">
+ <tr>
+  <td id="showcase_title" class="page_title" colspan="2" >Trending...</td>
+ </tr>
+ <tr>
+
+  <td id="nullaries" class="left">
+   <a href="pages" class="section_title">Pages</a><br/>
+<%= render Page.order("views DESC,created_at DESC").limit(2) %>
+
+   <a href="#" class="section_title">Images</a>
+   <table id="image_1" mediatype="image">
+    <tr>
+     <td id="image_1_thumb" class="thumb" rowspan="3"><a href="media/example.jpg">Thumbnail</a></td>
+     <td id="image_1_title" class="data">
+      <a href="media/example.jpg">Example image</a>
+      <a href="userpage.html">Aidan</a>
+      <span>7 views</span>
+     </td>
+    <tr>
+     <td id="image_1_desc" colspan="2">Another placeholder</td>
+    </tr>
+    <tr>
+     <td class="actions" colspan="2">
+      <a href="discussion.html">Discussion</a>
+     </td>
+    </tr>
+   </table>
+
+  </td>
+
+  <td id="polyadics" class="right">
+   <a href="show_commands.html" class="section_title">Commands</a><br/>
+   <ul class="command_list" mediatype="command">
+
+    <li id="command_1">
+     <div class="data" style="float:left">
+      <a href="example.html">show</a>
+      <span>122 calls</span>
+      <a href="userpage.html">kotoda.ma</span>
+     </div>
+     <div class="actions">
+       <a href="discussion.html">Discussion</a>
+       <span class="view">
+        <a href="editcommand.html">View in command editor</a>
+       </span>
+     </div>
+    </li>
+
+    <li id="command_2">
+     <div class="data">
+      <a href="example.html">edit</a>
+      <span>46 calls</span>
+      <a href="userpage.html">kotoda.ma</span>
+     </div>
+     <div class="actions">
+       <a href="discussion.html">Discussion</a>
+       <span class="view">
+        <a href="editcommand.html">View in command editor</a>
+       </span>
+     </div>
+    </li>
+
+    <li id="command_3">
+     <div class="data">
+      <a href="example.html">Entry</a>
+      <span># Calls</span>
+      <a href="userpage.html">Suggester</span>
+     </div>
+     <div class="actions">
+       <a href="discussion.html">Discussion</a>
+       <span class="view">
+        <a href="editcommand.html">View in command editor</a>
+       </span>
+     </div>
+    </li>
+
+   </ul>
+  </td>
+
+ </tr>
+</table>

@@ -1,0 +1,28 @@
+<table id="<%= mediatype.title %>_type">
+ <tr> 
+  <td id="<%= mediatype.title %>_type_thumb" class="thumb" rowspan="3"><%= link_to "Editor", mediatype %></td>
+  <td id="<%= mediatype.title %>_type_title" class="data">
+   <%= link_to mediatype.title, mediatype %>
+   <%= link_to mediatype.author, "userpage.html" %>
+   <span><%= mediatype.instances %> instances</span>
+  </td>
+ </tr>
+ <tr>
+  <td id="<%= mediatype.title %>_type_desc" colspan="2">
+   <span><%= mediatype.info %></span>
+<%- if ["talk","show"].include? params[:action] -%>
+   <span>(<%= link_to mediatype.title.capitalize, mediatypes_path %>)</span>
+<%- end -%>
+  </td>
+ </tr>
+ <tr>
+  <td class="actions" colspan="2">
+<%- if ["index"].include? params[:action] -%>
+   <%= link_to "Discussion", talk_mediatype_path(mediatype) %>
+<%- end -%>
+   <span class="view">
+    <%= link_to "View in mediatype editor", edit_mediatype_path(mediatype) %>
+   </span>
+  </td>
+ </tr>
+</table>

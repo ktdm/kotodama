@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>404 not found | kotoda.ma</title>
+  <style type="text/css">
+html,body {
+  height:100%;
+  margin:0px;
+  height:100%;
+  width:100%
+}
+#inner {
+  position:absolute;
+  top:50%;
+  height:71px;
+  margin-top:35.5px;
+  left:50%;
+  width:186px;
+  margin-left:93px
+}
+  </style>
+ </head>
+ <body>
+  <img src="404.png">
+ </body>
+</html>

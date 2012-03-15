@@ -1,0 +1,13 @@
+class PageController < ApplicationController
+  class Page < ActiveRecord::Base
+  end
+  def edit
+    @mediatype = "editor"
+    @title = "Edit page 'example page' | kotoda.ma"
+    @page = Page.new(:title => "New page", :info => "It's a new page!", :html => "<h1 style='text-align:center'>My new page</h1>")
+  end
+  def index
+    @mediatype = "mediatype"
+    @title = "Show all pages | kotoda.ma"
+  end
+end
