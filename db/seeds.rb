@@ -16,7 +16,6 @@ when 'PostgreSQL'
 else
   raise "Task not implemented for this DB adapter"
 end
-puts "hay"
 
 Media.create(:title => "mediatype", :mtype => "Mediatype", :info => "Mediatype mediatype.")
 Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype editor.")
@@ -26,7 +25,7 @@ Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype 
 #Create tables
 class SeedTables
   def self.create(table, fields)
-    ActiveRecord::Base.connection.drop_table(table)
+#    ActiveRecord::Base.connection.drop_table(table)
     ActiveRecord::Base.connection.create_table(table)
     fields.each do |field, type|
       ActiveRecord::Base.connection.add_column(table, field, type)
