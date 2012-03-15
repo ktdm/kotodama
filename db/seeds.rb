@@ -8,13 +8,10 @@
 
 #Add Mediatype mediatype to media
 Media.delete_all
-case ActiveRecord::Base.connection.adapter_name
-when 'SQLite'
-  ActiveRecord::Base.connection.execute "UPDATE sqlite_sequence SET seq=0 WHERE name='media';"
-when 'PostgreSQL'
+if Rails.env.production?
   ActiveRecord::Base.connection.reset_pk_sequence!('media')
 else
-  raise "Task not implemented for this DB adapter"
+  ActiveRecord::Base.connection.execute "UPDATE sqlite_sequence SET seq=0 WHERE name='media';"
 end
 
 Media.create(:title => "mediatype", :mtype => "Mediatype", :info => "Mediatype mediatype.")
