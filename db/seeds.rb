@@ -16,6 +16,7 @@ when 'PostgreSQL'
 else
   raise "Task not implemented for this DB adapter"
 end
+puts "hay"
 
 Media.create(:title => "mediatype", :mtype => "Mediatype", :info => "Mediatype mediatype.")
 Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype editor.")
