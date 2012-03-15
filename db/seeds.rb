@@ -12,7 +12,7 @@ case ActiveRecord::Base.connection.adapter_name
 when 'SQLite'
   ActiveRecord::Base.connection.execute "UPDATE sqlite_sequence SET seq=0 WHERE name='media';"
 when 'PostgreSQL'
-  ActiveRecord::Base.connection.reset_pk_sequence!(table_name)
+  ActiveRecord::Base.connection.reset_pk_sequence!('media')
 else
   raise "Task not implemented for this DB adapter"
 end
