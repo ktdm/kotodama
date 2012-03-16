@@ -1,5 +1,0 @@
-module Foo
-  def encode(id)
-    id + 5
-  end
-end

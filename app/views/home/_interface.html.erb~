@@ -1,5 +1,0 @@
-<div class="interface">
-<a href="/">Hay</a>
- <%= link_to image_tag("kotodama_logo_black.jpg", :id => "logo", :alt => "kotoda.ma", :title => "kotoda.ma"), root_path %>
- <input id="input" class="help_text" type="text" value="command or search" size="50" onfocus="inputFocus('input','command or search')" onblur="inputBlur('input','command or search')"/><br/>
-</div>
