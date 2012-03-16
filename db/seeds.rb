@@ -1,12 +1,4 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
-
-#Add Mediatype mediatype to media
+#Seed primary media
 Media.delete_all
 if Rails.env.production?
   ActiveRecord::Base.connection.reset_pk_sequence!('media')
@@ -19,7 +11,7 @@ Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype 
 #Media.create(:title => "editor", :mtype => "Mediatype", :info => "Editor mediatype.")
 #Media.create(:title => "editeditor", :mtype => "Editor", :info => "Editor editor.")
 
-#Create tables
+#Create data tables
 class SeedTables
   def self.create(table, fields)
     ActiveRecord::Base.connection.drop_table(table)
@@ -34,7 +26,7 @@ SeedTables.create( :mediatypes, { :media_id => :integer, :signature => :text } )
 SeedTables.create( :editors, { :media_id => :integer, :mtype => :integer } )
 #(You can use "pragma table_info(tableName)" in sqlite3 'as' schema.rb)
 
-#Add Mediatype data to mediatypes
+#Seed data tables
 class Mediatypes < ActiveRecord::Base
   establish_connection(:development)
   serialize :signature, Array

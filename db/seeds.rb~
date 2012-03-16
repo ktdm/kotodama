@@ -6,7 +6,7 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-#Add Mediatype mediatype to media
+#Seed primary media
 Media.delete_all
 if Rails.env.production?
   ActiveRecord::Base.connection.reset_pk_sequence!('media')
@@ -19,10 +19,10 @@ Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype 
 #Media.create(:title => "editor", :mtype => "Mediatype", :info => "Editor mediatype.")
 #Media.create(:title => "editeditor", :mtype => "Editor", :info => "Editor editor.")
 
-#Create tables
+#Create data tables
 class SeedTables
   def self.create(table, fields)
-#    ActiveRecord::Base.connection.drop_table(table)
+    ActiveRecord::Base.connection.drop_table(table)
     ActiveRecord::Base.connection.create_table(table)
     fields.each do |field, type|
       ActiveRecord::Base.connection.add_column(table, field, type)
@@ -34,7 +34,7 @@ SeedTables.create( :mediatypes, { :media_id => :integer, :signature => :text } )
 SeedTables.create( :editors, { :media_id => :integer, :mtype => :integer } )
 #(You can use "pragma table_info(tableName)" in sqlite3 'as' schema.rb)
 
-#Add Mediatype data to mediatypes
+#Seed data tables
 class Mediatypes < ActiveRecord::Base
   establish_connection(:development)
   serialize :signature, Array
