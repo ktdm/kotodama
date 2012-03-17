@@ -1,7 +1,5 @@
 class MediaController < ApplicationController
 
-  require "active_support/core_ext/kernel/singleton_class.rb"
-
   include Url
 
   def show
@@ -21,7 +19,6 @@ x = params[:id]
       render "media/" + params[:id] + "/index"
     elsif @media.mtype == "Editor"
       edit
-#redirect_to root_url.join("b")
     end
   end
 
@@ -32,25 +29,23 @@ x = params[:id]
     @title = "Edit mediatype '" + @media.title + "' | kotoda.ma"
     Object.const_set( "Editors",
                       Class.new(ActiveRecord::Base) {establish_connection(:development)} )
-if @media.mtype == "Editor"
-    type = Media.find( Editors.where( "media_id = ?", @media.id )[0].mtype )
-    Media.class_eval "has_many :#{type.title.downcase.pluralize}"
-    Object.const_set( type.title.pluralize,
-                      Class.new(ActiveRecord::Base) {
-      establish_connection(:development)
-#:joins?
-      belongs_to :media
-    } )
-    instance_variable_set( "@" + type.title.downcase,
-#                           Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", 1 )[0] )
-                           Object.const_get( type.title.pluralize ).joins( :media ).where( "media_id = ?", 1 )[0] )
-render :inline => 'testing'
-#    render "media/" + params[:id] + "/edit"
-
-else
-redirect_to root_url + encode( Editors.where( "mtype = ?", @media.id )[0].media_id )
-end
-
+    if @media.mtype == "Editor"
+      type = Media.find( Editors.where( "media_id = ?", @media.id )[0].mtype ) #redo as join
+      Media.class_eval "has_many :#{type.title.downcase.pluralize}"
+      Object.const_set( type.title,
+                        Class.new(ActiveRecord::Base) {
+        establish_connection(:development)
+        belongs_to :media
+      } )
+      instance_variable_set( "@" + type.title.downcase,
+                             Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", 1 )[0] )
+#                            Object.const_get( type.title.pluralize ).joins( :media ).where( "media_id = ?", 1 )[0] )
+#                            Class.new(ActiveRecord::Base) {establish_connection(:development)}.joins( :media => type.title.downcase.pluralize.to_sym ).where( "media_id = ?", 1 )[0] )
+#render :inline => 'testing'
+    render "media/" + params[:id] + "/edit"
+    else
+      redirect_to root_url + encode( Editors.where( "mtype = ?", @media.id )[0].media_id )
+    end
   end
 
 end
