@@ -23,7 +23,7 @@ class MediaController < ApplicationController
     @title = "Edit mediatype '" + @media.title + "' | kotoda.ma"
     Object.const_set( "Editors",
                       Class.new(ActiveRecord::Base) {establish_connection(:development)} )
-    if @media.mtype == "Editor"
+    if @media.mtype == "Editor" #optimise for redirect (recycle klasses, select where url=old params[:id])
       type = Media.find( Editors.where( "media_id = ?", @media.id )[0].mtype ) #redo as join
       Media.class_eval "has_many :#{type.title.downcase.pluralize}"
       Object.const_set( type.title.pluralize,
@@ -32,13 +32,21 @@ class MediaController < ApplicationController
         belongs_to :media
         serialize :signature, Array #generalise??
       } )
+#      Mediatype.find(Media.find(old params[:id]).mtype)).forall x w/ (signature in y=[Array,Hash]) do #as join
+#        Object.const_get( type.title.pluralize ).class_eval "serialize :#{x}, #{y}"
       instance_variable_set( "@" + type.title.downcase,
                              Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", 1 )[0] )
       @data=Object.const_get( type.title.pluralize ).where( "media_id = ?", 1 )[0]
-      render "media/" + params[:id] + "/edit"
+#Object.const_set("MediatypeController",Class.new(MediaController))
+#Object.const_get("MediatypeController").new.render "media/" + params[:id] + "/edit"
+      render "media/" + params[:id] + "/edit" #mediatype_controller...
     else
       redirect_to root_url + encode( Editors.where( "mtype = ?", @media.id )[0].media_id )
     end
+  end
+
+  def update
+
   end
 
 end

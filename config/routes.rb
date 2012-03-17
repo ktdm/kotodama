@@ -10,7 +10,7 @@ Rubydama01::Application.routes.draw do
 
   resources :media,
             :path => '',
-            :only => [:show, :edit],
+            :only => [:show, :edit, :update],
             :constraints => { :id => /[a-zA-Z0-9_\-]+/ } do
     get :talk, :on => :member
   end
