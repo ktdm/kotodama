@@ -48,7 +48,7 @@ class PagesController < ApplicationController
 
   def talk
     @page = Page.find(params[:id])
-#    @title=@@title
+    @title = "Discuss page '" + @page.title + "' | kotoda.ma"
   end
 
 end
