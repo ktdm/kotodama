@@ -20,7 +20,7 @@ class MediaController < ApplicationController
     @showntype = "editor"
     @action = "update"
     @media = Media.find( decode( params[:id] ) )
-    @title = "Edit mediatype '" + @media.title + "' | kotoda.ma"
+    @title = "Edit mediatype '" + @media.title + "' | kotoda.ma" #edit what? :P
     Object.const_set( "Editors",
                       Class.new(ActiveRecord::Base) {establish_connection(:development)} )
     if @media.mtype == "Editor" #optimise for redirect (recycle klasses, select where url=old params[:id])
