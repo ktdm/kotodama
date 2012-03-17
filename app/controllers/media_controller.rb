@@ -1,13 +1,23 @@
 class MediaController < ApplicationController
 
+  require "active_support/core_ext/kernel/singleton_class.rb"
+
   include Url
 
   def show
+x = params[:id]
     @media = Media.find( decode( params[:id] ) )
     if @media.mtype == "Mediatype"
       instance_variable_set( "@" + @media.title.downcase.pluralize,
                              Media.where( "mtype = ?", @media.title ) )
-#self.view_paths << Rails.root.join("app/views/media/" + params[:id])
+      self.class_eval do
+        def path x
+          append_view_path Rails.root.join("app/views/media/" + x)
+        end
+      end
+      path x
+#render @mediatypes #Calls to ActionResource
+#something like..?: Object.const_set( "MediatypeResource", Class.new (ActionResource::Base) { etc } )
       render "media/" + params[:id] + "/index"
     elsif @media.mtype == "Editor"
       edit
@@ -32,7 +42,7 @@ class MediaController < ApplicationController
     instance_variable_set( "@" + type.title.downcase,
 #                           Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", 1 )[0] )
                            Object.const_get( type.title.pluralize ).joins( :media ).where( "media_id = ?", 1 )[0] )
-render :inline => "'"+@mediatype.signature+"'"
+render :inline => '<%= link_to image_tag("kotodama_logo_black.jpg", :id => "logo", :alt => "kotoda.ma", :title => "kotoda.ma"), root_url %>'
 #    render "media/" + params[:id] + "/edit"
   end
 
