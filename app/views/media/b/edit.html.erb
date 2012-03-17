@@ -129,12 +129,12 @@ form>div {
     <div id="mediatype_editor_canvas" class="bottom">
 
      <div id="mediatype_script_frame">
-<%= m.text_area :script, :class => "editor_window" %>
+<%= text_area @data.id, :class => "editor_window" %>
      </div>
 
      <div id="mediatype_signature_frame">
-      <span style="display:<%= @mediatype.signature.length>1?'block':'none' %>">Function</span>
-      <ul id="signature_container" mediatype="mediatype"><%= render :partial => "li", :collection => @mediatype.signature %></ul>
+      <span style="display:<%= @data.signature.length>1?'block':'none' %>">Function</span>
+      <ul id="signature_container" mediatype="mediatype"><%= render :partial => "li", :collection => @data.signature %></ul>
      </div>
 
      <div id="mediatype_render_frame">
