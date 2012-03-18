@@ -137,8 +137,8 @@ form>div {
       <ul id="signature_container" mediatype="mediatype"><%= render :partial => "li", :collection => @data.signature %></ul>
      </div>
 
-     <div id="mediatype_render_frame">
-      <iframe id="mediatype_render" class="editor_window" src="./"></iframe>
+     <div id="mediatype_render_frame"><iframe style="display:none">Remove when document.write</iframe>
+      <iframe id="mediatype_render" class="editor_window" src="<%= root_url + @mediatype.url %>"></iframe>
      </div>
 
     </div>

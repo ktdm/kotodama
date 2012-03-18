@@ -15,4 +15,6 @@ Rubydama01::Application.routes.draw do
     get :talk, :on => :member
   end
 
+  match ":context/:id" => "media#show"
+
 end
