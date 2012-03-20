@@ -21,17 +21,19 @@ class MediaController < ApplicationController
     @showntype = "editor"
     @action = "update"
     @media = Media.find( decode( params[:id] ) ) #find instance
+    Object.const_set( "Mediatypes",
+                      Class.new(ActiveRecord::Base) {establish_connection(:development)} )
     Object.const_set( "Editors",
                       Class.new(ActiveRecord::Base) {establish_connection(:development)} )
+    @mediatype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0]
+    @editors = Editors.where( "mtype = ?", @mediatype.media_id )
     if params[:context].nil? #find editor
-      ers = Editors.where( "mtype = ?", @media.id )
-      ers.length > 0 ? redirect_to(root_url + encode( ers[0].media_id ) + "/" + params[:id])
-                     : new #this will become "Edit new editor"
+      @editors.length > 0 ? redirect_to(root_url + encode( @editors[0].media_id ) + "/" + params[:id])
+                          : new #this will become "Edit new editor"
     else
-      ers = Editors.where( "mtype = ?", decode(params[:id]) )
-      if ers.length == 1 #edit instance with its editor
-#        redirect_to(root_url + params[:context]) if ers[0].mtype != decode(params[:context])
-        type = Media.find( ers[0].mtype ) #redo as join
+      if @editors.length == 1 #edit instance with its editor
+#        redirect_to(root_url + params[:context]) if @editors[0].mtype != decode(params[:context])
+        type = Media.find(@editors[0].mtype ) #redo as join
         Media.class_eval "has_many :#{type.title.downcase.pluralize}"
         Object.const_set( type.title,
                           Class.new(ActiveRecord::Base) {
@@ -49,7 +51,7 @@ class MediaController < ApplicationController
         @script = Class.new {attr_accessor :value}.new
         @script.value = IO.read(Rails.root.join("app/views/media", params[:id], "index.html.erb"))
         render "media/" + params[:context] + "/edit" #will mongo save my api??
-      elsif ers.length > 1 #more than one editor
+      elsif @editors.length > 1 #more than one editor
         render :inline => "duplicate id issue :("
       else #incorrect editor reference
         redirect_to root_url + params[:id] + "/edit"
@@ -65,7 +67,14 @@ class MediaController < ApplicationController
   end
 
   def update
-
+#embed mediatype + editor references into page? session?
+    @media = Media.update( decode(params[:id]), params[:media] )
+    @mediatype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0]
+    @editors = Editors.where( "mtype = ?", @mediatype.media_id )
+#render :inline => @media.title.to_s
+    @mediatype = @media
+    @data = Object.const_get("Mediatypes").update(@mediatype.id, params[:data])
+render "media/" + encode(@editors[0].media_id) + "/edit"
   end
 
   def create #activerecord creation to be moved here!
