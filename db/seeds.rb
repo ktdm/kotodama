@@ -1,6 +1,6 @@
 #Seed primary media
 Media.delete_all
-if Rails.env.production?
+if false#Rails.env.production?
   ActiveRecord::Base.connection.reset_pk_sequence!('media')
 else
   ActiveRecord::Base.connection.execute "UPDATE sqlite_sequence SET seq=0 WHERE name='media';"
@@ -14,7 +14,7 @@ Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype 
 #Create data tables
 class SeedTables
   def self.create(table, fields)
-    ActiveRecord::Base.connection.drop_table(table)
+#    ActiveRecord::Base.connection.drop_table(table)
     ActiveRecord::Base.connection.create_table(table)
     fields.each do |field, type|
       ActiveRecord::Base.connection.add_column(table, field, type)
