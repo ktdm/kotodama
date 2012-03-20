@@ -212,8 +212,11 @@ function init() {
  nofollow();
  var i,j,views=document.getElementsByClassName("view");
  for (i=0;i<views.length;i++) views[i].onmousedown=viewlinks;
- if (window.eddisp) for (j in eddisp.frames) {
-  $(eddisp.frames[j]).style.display=(j==="0"?eddisp.display[j]:"none");
+ if (window.eddisp) {
+  for (j in eddisp.frames) {
+   $(eddisp.frames[j]).style.display=(j==="0"?eddisp.display[j]:"none");
+  }
+  eddisp.finalfunc(eddisp.menu[0])
  }
  if ((doc=document.documentElement).getAttribute("mediatype")==="editor") doc.className="noscroll";
 }

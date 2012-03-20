@@ -1,9 +1,9 @@
 <% content_for :head do %>
 <script type="text/javascript">
 var eddisp={
- frames:["code_editor_frame","code_result_frame"],
+ frames:["code_result_frame","code_editor_frame"],
  display:["block","block"],
- menu:["Code","Render"],
+ menu:["Render","Code"],
  finalfunc:function(a) {
   if (a==="Render") {
    b=$("code_result").contentWindow.document;
