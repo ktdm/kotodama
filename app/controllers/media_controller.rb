@@ -20,16 +20,16 @@ class MediaController < ApplicationController
   def edit
     @showntype = "editor"
     @action = "update"
-    @media = Media.find( decode( params[:id] ) )
+    @media = Media.find( decode( params[:id] ) ) #find instance
     Object.const_set( "Editors",
                       Class.new(ActiveRecord::Base) {establish_connection(:development)} )
-    if params[:context].nil?
+    if params[:context].nil? #find editor
       ers = Editors.where( "mtype = ?", @media.id )
       ers.length > 0 ? redirect_to(root_url + encode( ers[0].media_id ) + "/" + params[:id])
                      : new #this will become "Edit new editor"
     else
       ers = Editors.where( "mtype = ?", decode(params[:id]) )
-      if ers.length == 1
+      if ers.length == 1 #edit instance with its editor
 #        redirect_to(root_url + params[:context]) if ers[0].mtype != decode(params[:context])
         type = Media.find( ers[0].mtype ) #redo as join
         Media.class_eval "has_many :#{type.title.downcase.pluralize}"
@@ -45,11 +45,13 @@ class MediaController < ApplicationController
         instance_variable_set( "@" + type.title.downcase,
                                Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", 1 )[0] )
         @title = "Edit mediatype '" + type.title + "' | kotoda.ma" #title should really be a in root_url/b/*a*
-        @data=Object.const_get( type.title.pluralize ).where( "media_id = ?", 1 )[0]
+        @data = Object.const_get( type.title.pluralize ).where( "media_id = ?", 1 )[0]
+        @script = Class.new {attr_accessor :value}.new
+        @script.value = IO.read(Rails.root.join("app/views/media", params[:id], "index.html.erb"))
         render "media/" + params[:context] + "/edit" #will mongo save my api??
-      elsif ers.length > 1
+      elsif ers.length > 1 #more than one editor
         render :inline => "duplicate id issue :("
-      else
+      else #incorrect editor reference
         redirect_to root_url + params[:id] + "/edit"
       end
     end
