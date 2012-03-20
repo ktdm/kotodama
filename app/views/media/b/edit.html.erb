@@ -96,7 +96,7 @@ form>div {
 }
 </style>
 <%- end -%>
-<% content_for :onload do %>toggle_frames(eddisp.menu[0])<% end -%><!--necessary?!-->
+<% content_for :onload do %>toggle_frames(eddisp.menu[0])<% end -%>
 <%= render "home/login" %>
 <%= form_for @mediatype, :url => {:action => @action}, :html => {:class => "page"} do |m|%>
 <div><%= render "home/interface" %></div>
@@ -133,8 +133,8 @@ form>div {
      </div>
 
      <div id="mediatype_signature_frame">
-      <span style="display:<%= @data.signature.length>1?'block':'none' %>">Function</span>
-      <ul id="signature_container" mediatype="mediatype"><%= render :partial => "li", :collection => @data.signature %></ul>
+      <span style="display:<%= @data.arguments.length>1?'block':'none' %>">Function</span>
+      <ul id="signature_container" mediatype="mediatype"><%= render :partial => "media/b/li", :collection => @data.arguments %></ul>
      </div>
 
      <div id="mediatype_render_frame"><iframe style="display:none">Remove when document.write</iframe>
@@ -146,4 +146,4 @@ form>div {
 <%- end -%>
 <div id="ins_stamp">Instance of
  <input class="help_text" type="text" size="50" onkeypress="if (event.which==13) ins.call(this.parentNode.parentNode,this.value)"/>
-</div><%= render :partial => "argument", :object => {:n=>0} %>
+</div><%= render :partial => "media/b/argument", :object => {:n=>0} %>

@@ -1,6 +1,6 @@
 #Seed primary media
 Media.delete_all
-if false#Rails.env.production?
+if Rails.env.production?
   ActiveRecord::Base.connection.reset_pk_sequence!('media')
 else
   ActiveRecord::Base.connection.execute "UPDATE sqlite_sequence SET seq=0 WHERE name='media';"
@@ -14,7 +14,7 @@ Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype 
 #Create data tables
 class SeedTables
   def self.create(table, fields)
-#    ActiveRecord::Base.connection.drop_table(table)
+    ActiveRecord::Base.connection.drop_table(table)
     ActiveRecord::Base.connection.create_table(table)
     fields.each do |field, type|
       ActiveRecord::Base.connection.add_column(table, field, type)
@@ -22,18 +22,18 @@ class SeedTables
   end
 end
 
-SeedTables.create( :mediatypes, { :media_id => :integer, :signature => :text } )
+SeedTables.create( :mediatypes, { :media_id => :integer, :arguments => :text } )
 SeedTables.create( :editors, { :media_id => :integer, :mtype => :integer } )
 #(You can use "pragma table_info(tableName)" in sqlite3 'as' schema.rb)
 
 #Seed data tables
 class Mediatypes < ActiveRecord::Base
   establish_connection(:development)
-  serialize :signature, Array
+  serialize :arguments, Array
 end
 
-Mediatypes.create(:media_id => 1, :signature => ["signature" => "text"])
-#Mediatypes.create(:media_id => 3, :signature => ["mtype" => "integer"])
+Mediatypes.create(:media_id => 1, :arguments => ["arguments" => "text"])
+#Mediatypes.create(:media_id => 3, :arguments => ["mtype" => "integer"])
 
 class Editors < ActiveRecord::Base
   establish_connection(:development)
