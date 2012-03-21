@@ -42,7 +42,7 @@ body {
 
   <td id="nullaries" class="left">
    <a href="pages" class="section_title">Pages</a><br/>
-<%= render Page.order("views DESC,created_at DESC").limit(2) %>
+<%= render :partial => "media/c/page", :collection => Media.where("mtype = 'Page'").order("count DESC,created_at DESC").limit(2), :as => :page %>
 
    <a href="#" class="section_title">Images</a>
    <table id="image_1" mediatype="image">
