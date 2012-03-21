@@ -6,11 +6,11 @@
    <table style="margin-bottom:15px">
     <tr>
      <td id="page_title" class="data">
-      <%= link_to "New mediatype", media_path + "/new" %>
-      <span><%= (@mediatypes.count==1) ? @mediatypes.count.to_s + " instance" : @mediatypes.count.to_s + " instances" %></span>
+      <%= link_to "New mediatype", root_url + "b" %>
+      <span><%= @mediatypes.count.to_s + " instance" + (@mediatypes.count==1 ? "" : "s") %></span>
      </td>
      <td class="actions">
-      <%= link_to "Discussion", talk_media_path("a") %>
+      <%= link_to "Discussion", talk_media_path(@media.url) %>
      </td>
     </tr>
    </table>

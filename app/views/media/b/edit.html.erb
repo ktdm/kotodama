@@ -4,7 +4,10 @@ var eddisp={
  frames:["mediatype_render_frame","mediatype_script_frame","mediatype_signature_frame"],
  menu:["Render","Code","Type"],
  display:["block","block","block"],
- finalfunc:function(a){$("argument_operations").style.display=(a==="Type"?"block":"none")}
+ finalfunc:function(a){ //FIXME being done twice...
+  $("argument_operations").style.display=(a==="Type"?"block":"none");
+  $("mediatype_render").src = window.location.href.replace(/^.*\//, '/')
+ }
 };
 var lists={
  signature_container: {
@@ -113,7 +116,7 @@ form>div {
      </span>
      <div id="mediatype_editor_menu" class="actions">
       <a href="#" onclick="document.forms[1].submit()">Save</a>
-      <%= link_to "New", :action => "new" %>
+      <%= link_to "New", @editor_url %>
       <a href="#" onclick="toggle_frames(this.firstChild.data)">Render</a>
       <a href="#" onclick="toggle_frames(this.firstChild.data)">Code</a>
       <a href="#" onclick="toggle_frames(this.firstChild.data)">Type</a>
@@ -138,7 +141,7 @@ form>div {
      </div>
 
      <div id="mediatype_render_frame"><iframe style="display:none">Remove when document.write</iframe>
-      <iframe id="mediatype_render" class="editor_window" src="<%= root_url + @mediatype.url %>"></iframe>
+      <iframe id="mediatype_render" class="editor_window"></iframe>
      </div>
 
     </div>
