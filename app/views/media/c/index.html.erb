@@ -7,7 +7,7 @@
     <tr>
      <td id="page_type_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
      <td id="page_type_title" class="data">
-      <a href="pages/new">Pages</a>
+      <%= link_to "Pages", "c" %>
       <a href="userpage.html">kotoda.ma</a>
       <span><%= @pages.count %> instances</span>
      </td>
@@ -22,7 +22,7 @@
      <td class="actions" colspan="2">
       <a href="discussion.html">Discussion</a>
       <span class="view">
-       <%= link_to "View in mediatype editor", root_url + "b" %>
+       <%= link_to "View in mediatype editor", "b" %>
       </span>
      </td>
     </tr>

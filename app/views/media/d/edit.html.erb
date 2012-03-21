@@ -1,0 +1,79 @@
+<% content_for :head do %>
+<script type="text/javascript">
+var eddisp={
+ frames:["code_result_frame","code_editor_frame"],
+ display:["block","block"],
+ menu:["Render","Code"],
+ finalfunc:function(a) {
+  if (a==="Render") {
+   b=$("code_result").contentWindow.document;
+   b.write($("code_editor").value);
+   b.close();
+  }
+ }
+}
+</script>
+<style type="text/css">
+#code_editor_menu {
+ float:right
+}
+#code_editor_canvas>* {
+ height:100%
+}
+.page {
+ margin-bottom:0px
+}
+.bottom {
+ padding:5px;
+}
+.dropdown {
+ display:none
+}
+form {
+ display:table
+}
+form>div {
+ display:table-row
+}
+.interface,.top,.bottom {
+ display:table-cell;
+ padding:5px
+}
+</style>
+<%- end -%>
+<%= render "home/login" %>
+<%= form_for @page, :url => {:action => @action}, :html => {:class => "page"} do |p|%>
+<div><%= render "home/interface" %></div>
+ <div>
+  <div id="code_editor_actions" class="top">
+
+   <span class="section_title"
+    ><%= link_to "Page", media_url %>: <%= link_to @page.title, page_path, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= p.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
+   </span>
+   <span class="section_info">
+    <span onclick="textedit(this,true)">Info</span
+    ><div class="dropdown">
+<%= p.text_area :info, :onkeypress => "if (event.which===13&&!event.shiftKey) {textedit(this.parentNode,false);return false}", :onblur => "if ((p=this.parentNode).style.display!=='none') textedit(p,false)" %></div>
+   </span>
+
+   <div id="code_editor_menu" class="actions">
+    <a href="#" onclick="document.forms[1].submit()">Save</a>
+    <%= link_to "New", "d" %>
+    <a href="#" onclick="toggle_frames(this.firstChild.data)">Render</a>
+    <a href="#" onclick="toggle_frames(this.firstChild.data)">Code</a>
+   </div>
+
+  </div>
+ </div>
+ <div>
+  <div id="code_editor_canvas" class="bottom">
+
+   <div id="code_editor_frame" style="height:100%"><%= text_area :data, :html, :id => "code_editor", :class => "editor_window" %></div>
+
+   <div id="code_result_frame" style="height:100%">
+    <iframe id="code_result" class="editor_window"></iframe>
+   </div>
+
+  </div>
+ </div>
+<%- end -%>

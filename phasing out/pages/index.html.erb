@@ -1,3 +1,7 @@
+<% Media.create(:title => "editpage", :mtype => "Editor", :info => "Page editor.") %>
+<% Editors.create(:media_id => 4, :mtype => 3) %>
+<!------------------------------------------------------------------------------->
+<!--IMPORTANT! REMOVE THIS LINE AND ABOVE AFTER INITIALLY SAVING PAGE MEDIATYPE-->
 <table id="show" class="page">
  <tr>
 
@@ -7,7 +11,7 @@
     <tr>
      <td id="page_type_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
      <td id="page_type_title" class="data">
-      <a href="pages/new">Pages</a>
+      <%= link_to "Pages", "c" %>
       <a href="userpage.html">kotoda.ma</a>
       <span><%= @pages.count %> instances</span>
      </td>
@@ -15,20 +19,20 @@
     <tr>
     <td id="page_desc" colspan="2">
      <span>Description</span>
-     <span>(<%= link_to "Mediatype", root_url + "a" %>)</span>
+     <span>(<%= link_to "Mediatype", "a" %>)</span>
     </td>
     </tr>
     <tr>
      <td class="actions" colspan="2">
       <a href="discussion.html">Discussion</a>
       <span class="view">
-       <%= link_to "View in mediatype editor", root_url + "b" %>
+       <%= link_to "View in mediatype editor", "b" %>
       </span>
      </td>
     </tr>
    </table>
 
-   <div class="canvas" mediatype="page"><%= render @pages %></div>
+   <div class="canvas" mediatype="page"><%= render :partial => "media/c/page", :collection => @pages, :as => :page %></div>
 
   </td>
 

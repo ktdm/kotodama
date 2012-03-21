@@ -6,7 +6,7 @@ var eddisp={
  display:["block","block","block"],
  finalfunc:function(a){ //FIXME being done twice...
   $("argument_operations").style.display=(a==="Type"?"block":"none");
-  $("mediatype_render").src = window.location.href.replace(/^.*\//, '/')
+  if (a==="Render") $("mediatype_render").src = window.location.href.replace(/^.*\//, '/')
  }
 };
 var lists={
@@ -107,7 +107,7 @@ form>div {
    <div>
     <div id="mediatype_editor_actions" class="top">
      <span class="section_title"
-      ><%= link_to "Mediatype", media_path %>: <%= link_to @mediatype.title, media_path, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= m.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
+      ><%= link_to "Mediatype", "/a" %>: <%= link_to @mediatype.title, media_path, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= m.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
      </span>
      <span class="section_info">
       <span onclick="textedit(this,true)">Info</span

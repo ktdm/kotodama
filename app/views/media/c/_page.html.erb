@@ -1,18 +1,18 @@
 <% n = page.id -%>
 <table id="page_<%= n %>" mediatype="page">
  <tr>
-  <td id="page_<%= n %>_thumb" class="thumb" rowspan="3"><%= link_to "Thumbnail", page %></td>
+  <td id="page_<%= n %>_thumb" class="thumb" rowspan="3"><%= link_to "Thumbnail", page.url %></td>
   <td id="page_<%= n %>_title" class="data">
-   <%= link_to page.title, page %>
+   <%= link_to page.title, page.url %>
    <%= link_to page.author, "userpage.html" %>
-   <span><%= page.views %> views</span>
+   <span><%= page.count %> views</span>
   </td>
  </tr>
  <tr>
   <td id="page_<%= n %>_desc" colspan="2">
    <span><%= page.info %></span>
 <%- if ["talk","show"].include? params[:action] -%>
-   <span>(<%= link_to "Page", pages_path %>)</span>
+   <span>(<%= link_to "Page", "c" %>)</span>
 <%- end -%>
   </td>
  </tr>
@@ -22,7 +22,7 @@
    <%= link_to "Discussion", talk_page_path(page) %>
 <%- end -%>
    <span class="view">
-    <%= link_to "View in page editor", edit_page_path(page) %>
+    <%= link_to "View in page editor", "d" + "/" + page.url %>
    </span>
   </td>
  </tr>

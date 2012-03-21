@@ -1,16 +1,23 @@
 class MediaController < ApplicationController
 
   include Url
+  include AddTables
 
   def show
     if params[:context].nil?
       @media = Media.find( decode( params[:id] ) )
       instance_variable_set( "@" + @media.title.downcase.pluralize,
                              Media.where( "mtype = ?", @media.title ) )
-#      self.append_view_path Rails.root.join("app/views/media/" + params[:id])
 #render @mediatypes #Calls to ActionResource
 #something like..?: Object.const_set( "MediatypeResource", Class.new (ActionResource::Base) { etc } )
-      @media.mtype == "Editor" ? new : render("media/" + params[:id] + "/index")
+      case @media.mtype
+      when "Editor"
+        new
+      when "Mediatype"
+        render("media/" + params[:id] + "/index")
+      else
+        render :inline => Object.const_get(@media.mtype.pluralize).where("media_id = ?", @media.id)[0].html
+      end
     else
       @media = Media.find ( decode( params[:context] ) )
       @media.mtype == "Editor" ? edit : render("media/" + params[:context] + "/index")
@@ -33,14 +40,14 @@ class MediaController < ApplicationController
                           : new #this will become "Edit new editor"
     elsif @editors.length == 1 #edit instance with its editor
 #      redirect_to(root_url + params[:context]) if @editors[0].mtype != decode(params[:context])
-      type = Media.find( @editors[0].mtype ) #redo as join
+      type = Media.find( @editors[0].mtype )
       Media.class_eval "has_many :#{type.title.downcase.pluralize}"
       Object.const_set( type.title,
                         Class.new(ActiveRecord::Base) {
         establish_connection(:development)
         belongs_to :media
         serialize :arguments, Array #generalise??
-      } )
+      } ) #move to initializer for Mediatypes + Editors
       Object.const_set( type.title.pluralize, Class.new( Object.const_get(type.title) ) )
 #      Mediatype.find(Media.find(old params[:id]).mtype)).forall x w/ (arguments in y=[Array,Hash]) do #as join
 #        Object.const_get( type.title.pluralize ).class_eval "serialize :#{x}, #{y}"
@@ -48,8 +55,10 @@ class MediaController < ApplicationController
                              Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", @media.id )[0] )
       @title = "Edit mediatype '" + type.title + "' | kotoda.ma" #title should really be a in root_url/b/*a*
       @data = Object.const_get( type.title.pluralize ).where( "media_id = ?", @media.id )[0]
-      @script = Class.new {attr_accessor :value}.new
-      @script.value = IO.read(Rails.root.join("app/views/media", params[:id], "index.html.erb"))
+      if @media.mtype == "Mediatype"
+        @script = Class.new {attr_accessor :value}.new
+        @script.value = IO.read(Rails.root.join("app/views/media", params[:id], "index.html.erb"))
+      end
       render "media/" + params[:context] + "/edit" #will mongo save my api??
     elsif @editors.length > 1 #more than one editor
       render :inline => "duplicate id issue :("
@@ -60,12 +69,15 @@ class MediaController < ApplicationController
 
   def update
     @media = Media.update( decode(params[:id]), params[:media] )
-    @mediatype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0] #Media.mtype change to mediatype_id
-    @data = Object.const_get(@media.mtype.pluralize).update(@mediatype.id, params[:data] )
-    @data.arguments.map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } }.flatten! #For the editor?
+    @data = Object.const_get(@media.mtype.pluralize).new(params[:data])
+    if @media.mtype == "Mediatype"
+      @data.arguments.map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } }.flatten!
+      File.open(Rails.root.join("app/views/media", params[:id], "index.html.erb").to_s, "w") {|f| f.write(params[:script][:value]) }
+      @data.save
+    else
+      Object.const_get(@media.mtype.pluralize).update_all(params[:data], [ "media_id = ?", decode(params[:id]) ])
+    end
     @media.save
-    @data.save
-    File.open(Rails.root.join("app/views/media", params[:id], "index.html.erb").to_s, "w") {|f| f.write(params[:script][:value]) }
     redirect_to edit_media_url
   end
 
@@ -79,8 +91,8 @@ class MediaController < ApplicationController
     @editors = Editors.where("media_id = ?", decode(params[:id]))
     mediatype = Media.find(@editors[0].mtype)
     @media = Media.new(:title => "New " + mediatype.title.downcase, :info => "It's a new " + mediatype.title.downcase + "!")
-    @data = Object.const_get(mediatype.mtype.pluralize).new
-    @mediatype = @media
+    @data = Object.const_get(mediatype.title.pluralize).new
+    instance_variable_set( "@" + mediatype.title.downcase, @media )
     render "media/" + params[:id] + "/edit"
   end
 
@@ -89,13 +101,31 @@ class MediaController < ApplicationController
     mediatype = Media.find( Editors.where( "media_id = ?", decode(params[:id]) )[0].mtype )
     @media.mtype = mediatype.title
     @data = Object.const_get(@media.mtype.pluralize).new(params[:data])
-    @data.arguments.map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } }.flatten! #Ditto
-    @script = Class.new {attr_accessor :value}.new
-    @script.value = params[:script][:value]
+    if @media.mtype == "Mediatype"
+      basetype = {"array" => "text"}
+      args = @data.arguments[0].map {|x| [ x[0], basetype[x[1]] || x[1] ] }
+      T.create( @media.title.downcase.pluralize.to_sym, {:media_id => :integer}.merge(@data.arguments[0]) )
+      @data.arguments.map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } }.flatten!
+
+      @script = Class.new {attr_accessor :value}.new
+      @script.value = params[:script][:value]
+    end
     @media.save
     @data.media_id = @media.id
     @data.save
-    File.open(Rails.root.join("app/views/media", @media.url, "index.html.erb").to_s, "w") {|f| f.write(@script.value) }
+    if @media.mtype == "Mediatype"
+      path = Rails.root.join("app/views/media", @media.url)
+      Dir.mkdir(path) unless File.exists?(path)
+      File.open(path.join("index.html.erb"), "w") {|f| f.write(@script.value) }
+      Object.const_set( @media.title.pluralize,
+                        Class.new(ActiveRecord::Base) {
+        establish_connection(:development)
+        belongs_to :media
+      } )
+      @data.arguments.each do |x|
+        Object.const_get(@media.title).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
+      end
+    end
     redirect_to media_url + "/" + @media.url
   end
 
