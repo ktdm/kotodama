@@ -7,9 +7,7 @@ class MediaController < ApplicationController
     if params[:context].nil?
       @media = Media.find( decode( params[:id] ) )
       instance_variable_set( "@" + @media.title.downcase.pluralize,
-                             Media.where( "mtype = ?", @media.title ) )
-#render @mediatypes #Calls to ActionResource
-#something like..?: Object.const_set( "MediatypeResource", Class.new (ActionResource::Base) { etc } )
+                             Media.where( "mtype = ?", @media.title ) ) if ["Mediatype","Editor"].index(@media.mtype)
       case @media.mtype
       when "Editor"
         new
@@ -46,14 +44,13 @@ class MediaController < ApplicationController
                         Class.new(ActiveRecord::Base) {
         establish_connection(:development)
         belongs_to :media
-        serialize :arguments, Array #generalise??
+        serialize :arguments, Array #put in initializer
       } ) #move to initializer for Mediatypes + Editors
       Object.const_set( type.title.pluralize, Class.new( Object.const_get(type.title) ) )
-#      Mediatype.find(Media.find(old params[:id]).mtype)).forall x w/ (arguments in y=[Array,Hash]) do #as join
-#        Object.const_get( type.title.pluralize ).class_eval "serialize :#{x}, #{y}"
       instance_variable_set( "@" + type.title.downcase,
                              Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", @media.id )[0] )
       @title = "Edit mediatype '" + type.title + "' | kotoda.ma" #title should really be a in root_url/b/*a*
+#also not mediatype : type.title
       @data = Object.const_get( type.title.pluralize ).where( "media_id = ?", @media.id )[0]
       if @media.mtype == "Mediatype"
         @script = Class.new {attr_accessor :value}.new
@@ -90,8 +87,9 @@ class MediaController < ApplicationController
                       Class.new(ActiveRecord::Base) {establish_connection(:development)} )
     @editors = Editors.where("media_id = ?", decode(params[:id]))
     mediatype = Media.find(@editors[0].mtype)
-    @media = Media.new(:title => "New " + mediatype.title.downcase, :info => "It's a new " + mediatype.title.downcase + "!")
+    @media = Media.new(:title => "New " + mediatype.title.downcase, :info => "It's a new " + mediatype.title.downcase + "!", :url => "")
     @data = Object.const_get(mediatype.title.pluralize).new
+    @data.arguments = "" if mediatype.title == "Mediatype"
     instance_variable_set( "@" + mediatype.title.downcase, @media )
     render "media/" + params[:id] + "/edit"
   end

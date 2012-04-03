@@ -1,0 +1,72 @@
+<%
+ tt = mediatype.title.downcase
+ @title = "All " + tt.pluralize + " | kotoda.ma"
+ media = instance_variable_get("@" + tt.pluralize)
+ mt = Media.where("title = ?", mediatype.mtype)[0]
+ e = Media.find(Editors.where("mtype = ?", mt.id)[0].media_id)
+%>
+<table id="<%= tt %>_page" class="page">
+ <tr>
+
+  <td id="<%= tt %>_content" class="left">
+   <span class="page_title">'<%= tt.capitalize %>' mediatype summary</span>
+
+   <table id="page_type" mediatype="mediatype">
+    <tr>
+     <td id="page_type_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
+     <td id="page_type_title" class="data">
+      <%= link_to "New " + tt, tt.url %>
+      <%= link_to mediatype.author, "userpage.html" %>
+      <span><%= media.count.to_s + " instance" + (media.count==1 ? "" : "s") %></span>
+     </td>
+    </tr>
+    <tr>
+    <td id="page_desc" colspan="2">
+     <span>Description</span>
+     <span>(<%= link_to mediatype.mtype, mt.url %>)</span>
+    </td>
+    </tr>
+    <tr>
+     <td class="actions" colspan="2">
+      <a href="discussion.html">Discussion</a>
+      <span class="view">
+       <%= link_to "View in ' + mediatype.mtype.downcase + ' editor", e.url %>
+      </span>
+     </td>
+    </tr>
+   </table>
+
+
+   <table style="margin-bottom:15px">
+    <tr>
+     <td id="page_title" class="data">
+      <%= link_to "New " + tt, root_url + tt.url %>
+      <span><%= media.count.to_s + " instance" + (media.count==1 ? "" : "s") %></span>
+     </td>
+     <td class="actions">
+      <%= link_to "Discussion", talk_media_path(@media.url) %>
+     </td>
+    </tr>
+   </table>
+   <div class="canvas" mediatype="mediatype"><%= render :partial => "home/summary", :collection => media %></div>
+  </td>
+
+  <td id="ads" class="right">
+   <table class="ad">
+    <tr>
+     <td>
+      <div class="ad_image">
+       <div class="dummy_ad">
+        <a href="ad.html"><img style="width:55px;height:40px" src="media/kotodama_logo_2.png"/></a>
+       </div>
+      </div>
+     </td>
+    </tr>
+    <tr>
+     <td><a href="ad.html">Want ad space?</a></td>
+    </tr>
+   </table>
+  </td>
+
+ </tr>
+</table>

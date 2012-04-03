@@ -1,3 +1,4 @@
+<% @title = "All mediatypes | kotoda.ma" %>
 <table id="mediatype_page" class="page">
  <tr>
 
@@ -14,7 +15,7 @@
      </td>
     </tr>
    </table>
-   <div class="canvas" mediatype="mediatype"><%= render :partial => "media/a/mediatypes", :collection => @mediatypes, :as => :mediatype %></div>
+   <div class="canvas" mediatype="mediatype"><%= render :partial => "home/summary", :collection => @mediatypes %></div>
   </td>
 
   <td id="ads" class="right">

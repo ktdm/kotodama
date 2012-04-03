@@ -1,4 +1,7 @@
-<% @title = "All pages | kotoda.ma" %>
+<% Media.create(:title => "editpage", :mtype => "Editor", :info => "Page editor.") %>
+<% Editors.create(:media_id => 4, :mtype => 3) %>
+<!------------------------------------------------------------------------------->
+<!--IMPORTANT! REMOVE THIS LINE AND ABOVE AFTER INITIALLY SAVING PAGE MEDIATYPE-->
 <table id="show" class="page">
  <tr>
 
@@ -29,7 +32,7 @@
     </tr>
    </table>
 
-   <div class="canvas" mediatype="page"><%= render :partial => "home/summary", :collection => @pages %></div>
+   <div class="canvas" mediatype="page"><%= render :partial => "media/c/page", :collection => @pages, :as => :page %></div>
 
   </td>
 

@@ -48,7 +48,7 @@ form>div {
   <div id="code_editor_actions" class="top">
 
    <span class="section_title"
-    ><%= link_to "Page", media_url %>: <%= link_to @page.title, page_path, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= p.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
+    ><%= link_to "Page", "/c" %>: <%= link_to @page.title, "/" + @page.url, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= p.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
    </span>
    <span class="section_info">
     <span onclick="textedit(this,true)">Info</span
