@@ -13,7 +13,7 @@ Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype 
 #Media.create(:title => "editor", :mtype => "Mediatype", :info => "Editor mediatype.")
 #Media.create(:title => "editeditor", :mtype => "Editor", :info => "Editor editor.")
 
-T.create( :mediatypes, { :media_id => :integer, :arguments => :text } )
+T.create( :mediatypes, { :media_id => :integer, :arguments => :text, :script => :text } )
 T.create( :editors, { :media_id => :integer, :mtype => :integer } )
 #(You can use "pragma table_info(tableName)" in sqlite3 'as' schema.rb)
 
@@ -23,7 +23,7 @@ class Mediatypes < ActiveRecord::Base
   serialize :arguments, Array
 end
 
-Mediatypes.create(:media_id => 1, :arguments => ["arguments" => "text"])
+Mediatypes.create( :media_id => 1, :arguments => ["arguments" => "text"], :script => IO.read(Rails.root.join("app/views/home/mediatype.html.erb")) )
 #Mediatypes.create(:media_id => 3, :arguments => ["mtype" => "integer"])
 
 class Editors < ActiveRecord::Base
@@ -31,4 +31,8 @@ class Editors < ActiveRecord::Base
 end
 
 Editors.create(:media_id => 2, :mtype => 1)
+#Editors.create(:media_id => 4, :mtype => 3)
+
+############
+#Media.create(:title => "editpage", :mtype => "Editor", :info => "Page editor.")
 #Editors.create(:media_id => 4, :mtype => 3)

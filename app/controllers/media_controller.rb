@@ -6,15 +6,15 @@ class MediaController < ApplicationController
   def show
     if params[:context].nil?
       @media = Media.find( decode( params[:id] ) )
-      instance_variable_set( "@" + @media.title.downcase.pluralize,
-                             Media.where( "mtype = ?", @media.title ) ) if ["Mediatype","Editor"].index(@media.mtype)
+      instance_variable_set("@" + @media.title.downcase.pluralize, Media.where( "mtype = ?", @media.title )) if ["Mediatype","Editor"].index(@media.mtype)
+      instance_variable_set( "@" + @media.mtype.downcase, Object.const_get(@media.mtype.pluralize).where("media_id = ?", @media.id)[0] )
       case @media.mtype
       when "Editor"
         new
       when "Mediatype"
-        render("media/" + params[:id] + "/index")
+        render :inline => Mediatypes.find(1).script, :layout => "application"
       else
-        render :inline => Object.const_get(@media.mtype.pluralize).where("media_id = ?", @media.id)[0].html
+        render :inline => Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0].script
       end
     else
       @media = Media.find ( decode( params[:context] ) )
@@ -52,10 +52,6 @@ class MediaController < ApplicationController
       @title = "Edit mediatype '" + type.title + "' | kotoda.ma" #title should really be a in root_url/b/*a*
 #also not mediatype : type.title
       @data = Object.const_get( type.title.pluralize ).where( "media_id = ?", @media.id )[0]
-      if @media.mtype == "Mediatype"
-        @script = Class.new {attr_accessor :value}.new
-        @script.value = IO.read(Rails.root.join("app/views/media", params[:id], "index.html.erb"))
-      end
       render "media/" + params[:context] + "/edit" #will mongo save my api??
     elsif @editors.length > 1 #more than one editor
       render :inline => "duplicate id issue :("
@@ -66,14 +62,10 @@ class MediaController < ApplicationController
 
   def update
     @media = Media.update( decode(params[:id]), params[:media] )
-    @data = Object.const_get(@media.mtype.pluralize).new(params[:data])
     if @media.mtype == "Mediatype"
-      @data.arguments.map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } }.flatten!
-      File.open(Rails.root.join("app/views/media", params[:id], "index.html.erb").to_s, "w") {|f| f.write(params[:script][:value]) }
-      @data.save
-    else
-      Object.const_get(@media.mtype.pluralize).update_all(params[:data], [ "media_id = ?", decode(params[:id]) ])
+      params[:data][:arguments].map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } } #due to :serialize
     end
+    Object.const_get(@media.mtype.pluralize).update_all(params[:data], [ "media_id = ?", decode(params[:id]) ])
     @media.save
     redirect_to edit_media_url
   end
@@ -104,17 +96,6 @@ class MediaController < ApplicationController
       args = @data.arguments[0].map {|x| [ x[0], basetype[x[1]] || x[1] ] }
       T.create( @media.title.downcase.pluralize.to_sym, {:media_id => :integer}.merge(@data.arguments[0]) )
       @data.arguments.map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } }.flatten!
-
-      @script = Class.new {attr_accessor :value}.new
-      @script.value = params[:script][:value]
-    end
-    @media.save
-    @data.media_id = @media.id
-    @data.save
-    if @media.mtype == "Mediatype"
-      path = Rails.root.join("app/views/media", @media.url)
-      Dir.mkdir(path) unless File.exists?(path)
-      File.open(path.join("index.html.erb"), "w") {|f| f.write(@script.value) }
       Object.const_set( @media.title.pluralize,
                         Class.new(ActiveRecord::Base) {
         establish_connection(:development)
@@ -123,6 +104,13 @@ class MediaController < ApplicationController
       @data.arguments.each do |x|
         Object.const_get(@media.title).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
       end
+    end
+    @media.save
+    @data.media_id = @media.id
+    @data.save
+    if @media.mtype == "Mediatype"
+      path = Rails.root.join("app/views/media", @media.url)
+      Dir.mkdir(path) unless File.exists?(path)
     end
     redirect_to media_url + "/" + @media.url
   end
