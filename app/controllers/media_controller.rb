@@ -6,6 +6,20 @@ class MediaController < ApplicationController
   def show
     if params[:context].nil?
       @media = Media.find( decode( params[:id] ) )
+      unless Object.const_defined? @media.mtype.pluralize
+        Object.const_set( @media.mtype.pluralize, Class.new(ActiveRecord::Base) {
+          establish_connection(:development)
+          belongs_to :media
+        } )
+        Object.const_set( @media.mtype, Class.new(ActiveRecord::Base) {
+          establish_connection(:development)
+          belongs_to :media
+        } )
+        Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0].arguments.each do |x|
+          Object.const_get(@media.mtype).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
+        end
+        Media.class_eval "has_many :#{@media.mtype.pluralize}"
+      end
       instance_variable_set("@" + @media.title.downcase.pluralize, Media.where( "mtype = ?", @media.title )) if ["Mediatype","Editor"].index(@media.mtype)
       instance_variable_set( "@" + @media.mtype.downcase, Object.const_get(@media.mtype.pluralize).where("media_id = ?", @media.id)[0] )
       case @media.mtype
@@ -35,8 +49,6 @@ class MediaController < ApplicationController
     elsif @editors.length == 1 #edit instance with its editor
 #      redirect_to(root_url + params[:context]) if @editors[0].mtype != decode(params[:context])
       type = Media.find( @editors[0].mtype )
-      Media.class_eval "has_many :#{type.title.downcase.pluralize}" #move to create; necessary?
-#      Object.const_set( type.title.pluralize, Class.new( Object.const_get(type.title) ) )
       instance_variable_set( "@" + type.title.downcase,
                              Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", @media.id )[0] )
       @title = "Edit mediatype '" + type.title + "' | kotoda.ma" #title should really be a in root_url/b/*a*
@@ -94,6 +106,7 @@ class MediaController < ApplicationController
       @data.arguments.each do |x|
         Object.const_get(@media.title).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
       end
+      Media.class_eval "has_many :#{@media.title.pluralize}"
     end
     @media.save
     @data.media_id = @media.id
