@@ -26,10 +26,6 @@ class MediaController < ApplicationController
     @showntype = "editor"
     @action = "update"
     @media = Media.find( decode( params[:id] ) ) #find instance
-    Object.const_set( "Mediatypes",
-                      Class.new(ActiveRecord::Base) {establish_connection(:development)} )
-    Object.const_set( "Editors",
-                      Class.new(ActiveRecord::Base) {establish_connection(:development)} )
     @mediatype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0]
     @editors = Editors.where( "mtype = ?", @mediatype.media_id )
     @editor_url = root_url + encode( @editors[0].media_id ) #add helper
@@ -39,14 +35,8 @@ class MediaController < ApplicationController
     elsif @editors.length == 1 #edit instance with its editor
 #      redirect_to(root_url + params[:context]) if @editors[0].mtype != decode(params[:context])
       type = Media.find( @editors[0].mtype )
-      Media.class_eval "has_many :#{type.title.downcase.pluralize}"
-      Object.const_set( type.title,
-                        Class.new(ActiveRecord::Base) {
-        establish_connection(:development)
-        belongs_to :media
-        serialize :arguments, Array #put in initializer
-      } ) #move to initializer for Mediatypes + Editors
-      Object.const_set( type.title.pluralize, Class.new( Object.const_get(type.title) ) )
+      Media.class_eval "has_many :#{type.title.downcase.pluralize}" #move to create; necessary?
+#      Object.const_set( type.title.pluralize, Class.new( Object.const_get(type.title) ) )
       instance_variable_set( "@" + type.title.downcase,
                              Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", @media.id )[0] )
       @title = "Edit mediatype '" + type.title + "' | kotoda.ma" #title should really be a in root_url/b/*a*
@@ -75,8 +65,6 @@ class MediaController < ApplicationController
     @action = "create"
 #New mediatype => need new folder in /media, new table in dev.sqlite3, (new object on server), and new mediatype record
 #Otherwise => Just new media + data records
-    Object.const_set( "Editors",
-                      Class.new(ActiveRecord::Base) {establish_connection(:development)} )
     @editors = Editors.where("media_id = ?", decode(params[:id]))
     mediatype = Media.find(@editors[0].mtype)
     @media = Media.new(:title => "New " + mediatype.title.downcase, :info => "It's a new " + mediatype.title.downcase + "!", :url => "")
@@ -96,10 +84,12 @@ class MediaController < ApplicationController
       args = @data.arguments[0].map {|x| [ x[0], basetype[x[1]] || x[1] ] }
       T.create( @media.title.downcase.pluralize.to_sym, {:media_id => :integer}.merge(@data.arguments[0]) )
       @data.arguments.map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } }.flatten!
-      Object.const_set( @media.title.pluralize,
-                        Class.new(ActiveRecord::Base) {
+      Object.const_set( @media.title.pluralize, Class.new(ActiveRecord::Base) {
         establish_connection(:development)
         belongs_to :media
+      } )
+      Object.const_set( @media.title, Class.new(ActiveRecord::Base) {
+        establish_connection(:development)
       } )
       @data.arguments.each do |x|
         Object.const_get(@media.title).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
