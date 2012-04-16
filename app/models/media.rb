@@ -10,4 +10,6 @@ class Media < ActiveRecord::Base
     media.url = encode(media.id)
     media.save
   end
+  has_many :mediatypes
+  has_many :editors
 end

@@ -5,9 +5,7 @@ gem 'rails', '3.2.1'
 gem 'heroku'
 gem 'rb-readline'
 
-group :production do
-  gem 'thin'
-end
+gem 'thin'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

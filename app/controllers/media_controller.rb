@@ -95,7 +95,7 @@ class MediaController < ApplicationController
       @data.arguments.each do |x|
         Object.const_get(@media.title).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
       end
-      Media.class_eval "has_many :#{@media.title.pluralize}"
+      Media.class_eval "has_many :#{@media.title.downcase.pluralize}"
     end
     @media.save
     @data.media_id = @media.id
