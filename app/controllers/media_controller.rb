@@ -2,24 +2,12 @@ class MediaController < ApplicationController
 
   include Url
   include AddTables
+  include InitMedia
 
   def show
     if params[:context].nil?
       @media = Media.find( decode( params[:id] ) )
-      unless Object.const_defined? @media.mtype.pluralize
-        Object.const_set( @media.mtype.pluralize, Class.new(ActiveRecord::Base) {
-          establish_connection(:development)
-          belongs_to :media
-        } )
-        Object.const_set( @media.mtype, Class.new(ActiveRecord::Base) {
-          establish_connection(:development)
-          belongs_to :media
-        } )
-        Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0].arguments.each do |x|
-          Object.const_get(@media.mtype).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
-        end
-        Media.class_eval "has_many :#{@media.mtype.pluralize}"
-      end
+      init_obj(@media.mtype) unless Object.const_defined? @media.mtype.pluralize
       instance_variable_set("@" + @media.title.downcase.pluralize, Media.where( "mtype = ?", @media.title )) if ["Mediatype","Editor"].index(@media.mtype)
       instance_variable_set( "@" + @media.mtype.downcase, Object.const_get(@media.mtype.pluralize).where("media_id = ?", @media.id)[0] )
       case @media.mtype
@@ -40,6 +28,7 @@ class MediaController < ApplicationController
     @showntype = "editor"
     @action = "update"
     @media = Media.find( decode( params[:id] ) ) #find instance
+    init_obj(@media.mtype) unless Object.const_defined? @media.mtype.pluralize
     @mediatype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0]
     @editors = Editors.where( "mtype = ?", @mediatype.media_id )
     @editor_url = root_url + encode( @editors[0].media_id ) #add helper
