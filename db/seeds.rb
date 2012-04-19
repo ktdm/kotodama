@@ -8,9 +8,9 @@ else
   T.conn.execute "UPDATE sqlite_sequence SET seq=0 WHERE name='media';"
 end
 
-Media.create(:title => "mediatype", :mtype => "Mediatype", :info => "Mediatype mediatype.")
+Media.create(:title => "mediatype", :count => 2, :mtype => "Mediatype", :info => "Mediatype mediatype.")
 Media.create(:title => "editmediatype", :mtype => "Editor", :info => "Mediatype editor.")
-Media.create(:title => "editor", :mtype => "Mediatype", :info => "Editor mediatype.")
+Media.create(:title => "editor", :count => 2, :mtype => "Mediatype", :info => "Editor mediatype.")
 Media.create(:title => "editeditor", :mtype => "Editor", :info => "Editor editor.")
 
 T.create( :mediatypes, { :media_id => :integer, :arguments => :text, :script => :text } )

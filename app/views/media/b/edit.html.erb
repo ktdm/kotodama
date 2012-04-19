@@ -149,5 +149,5 @@ form>div {
    </div>
 <%- end -%>
 <div id="ins_stamp">Instance of
- <input class="help_text" type="text" size="50" onkeypress="if (event.which==13) ins.call(this.parentNode.parentNode,this.value)"/>
+ <input class="help_text" type="text" size="50" onkeypress="if (event.which==13) ins.call(this.parentNode.parentNode,this.value.charAt(0).toUpperCase()+this.value.slice(1))"/>
 </div><%= render :partial => "media/b/argument", :object => {:n=>0} %>

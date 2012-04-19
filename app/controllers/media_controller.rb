@@ -41,7 +41,7 @@ class MediaController < ApplicationController
       instance_variable_set( "@" + type.title.downcase,
                              Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", @media.id )[0] )
       @data = Object.const_get( type.title.pluralize ).where( "media_id = ?", @media.id )[0]
-      @mtype.arguments[0].each do |w| # generalise for argument types? -> replace in update
+      @mtype.arguments[0].each do |w| # generalise for argument types?
         @data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
       end
       render "media/" + params[:context] + "/edit" #will mongo save my api??
@@ -54,8 +54,9 @@ class MediaController < ApplicationController
 
   def update
     @media = Media.update( decode(params[:id]), params[:media] )
-    if @media.mtype == "Mediatype"
-      params[:data][:arguments].map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } } #due to :serialize
+    @mtype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0]
+    @mtype.arguments[0].each do |w|
+      params[:data][w[0].to_sym].map! {|x| x.map {|y| {y[0]=>y[1]} } } if w[1]=="Array"
     end
     Object.const_get(@media.mtype.pluralize).update_all(params[:data], [ "media_id = ?", decode(params[:id]) ])
     @media.save
@@ -65,8 +66,6 @@ class MediaController < ApplicationController
   def new
     @showntype = "editor"
     @action = "create"
-#New mediatype => need new folder in /media, new table in dev.sqlite3, (new object on server), and new mediatype record
-#Otherwise => Just new media + data records
     @editors = Editors.where("media_id = ?", decode(params[:id]))
     mediatype = Media.find(@editors[0].mtype)
     @media = Media.new(:title => "New " + mediatype.title.downcase, :info => "It's a new " + mediatype.title.downcase + "!", :url => "")
@@ -78,14 +77,18 @@ class MediaController < ApplicationController
 
   def create
     @media = Media.new(params[:media])
-    mediatype = Media.find( Editors.where( "media_id = ?", decode(params[:id]) )[0].mtype )
-    @media.mtype = mediatype.title
+    @mtype = Media.find( Editors.where( "media_id = ?", decode(params[:id]) )[0].mtype )
+    @media.mtype = @mtype.title
     @data = Object.const_get(@media.mtype.pluralize).new(params[:data])
-    if @media.mtype == "Mediatype"
+    if @media.mtype == "Mediatype" # move to mediatype editor?
       basetype = {"Array" => "Text"}
       args = @data.arguments[0].map {|x| [ x[0], basetype[x[1]] || x[1] ] }
       T.create( @media.title.downcase.pluralize.to_sym, {:media_id => :integer}.merge(@data.arguments[0]) )
-      @data.arguments.map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } }.flatten!
+      @mtype.count += 1
+      @mtype.save
+    end
+    @mtype.arguments[0].each do |w|
+      @data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } } if w[1]=="Array"
     end
     @media.save
     @data.media_id = @media.id
