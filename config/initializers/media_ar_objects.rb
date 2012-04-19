@@ -9,6 +9,7 @@ Object.const_set( "Mediatype", Class.new(ActiveRecord::Base) {
 Object.const_set( "Editors", Class.new(ActiveRecord::Base) {
   establish_connection(:development)
   belongs_to :media
+  serialize :forms, Array
 } )
 Object.const_set( "Editor", Class.new(ActiveRecord::Base) {
   establish_connection(:development)

@@ -159,8 +159,8 @@ function del(a) {
    actions[i].onmousedown=function() {
     del.call(this,false);
     n=this.firstChild.id;
-    n=parseFloat(n.slice(4));
-    if (this.nextSibling.nodeType===3) this.parentNode.removeChild(this.nextSibling);
+    n=parseFloat(n.slice(n.indexOf("_") + 1));
+    if ((b=this.nextSibling)&&b.nodeType===3) this.parentNode.removeChild(this.nextSibling);
     this.parentNode.removeChild(this);
     if (lists[l].finalfunc) lists[l].finalfunc(n);
    }

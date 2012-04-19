@@ -9,7 +9,7 @@ class MediaController < ApplicationController
       @media = Media.find( decode( params[:id] ) )
       init_obj(@media.mtype) unless Object.const_defined? @media.mtype.pluralize
       instance_variable_set("@" + @media.title.downcase.pluralize, Media.where( "mtype = ?", @media.title )) if ["Mediatype","Editor"].index(@media.mtype)
-      instance_variable_set( "@" + @media.mtype.downcase, Object.const_get(@media.mtype.pluralize).where("media_id = ?", @media.id)[0] )
+      instance_variable_set( "@" + @media.mtype.downcase, Object.const_get(@media.mtype.pluralize).where("media_id = ?", @media.id)[0] ) # combine with @media
       case @media.mtype
       when "Editor"
         new
@@ -29,8 +29,8 @@ class MediaController < ApplicationController
     @action = "update"
     @media = Media.find( decode( params[:id] ) ) #find instance
     init_obj(@media.mtype) unless Object.const_defined? @media.mtype.pluralize
-    @mediatype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0]
-    @editors = Editors.where( "mtype = ?", @mediatype.media_id )
+    @mtype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0]
+    @editors = Editors.where( "mtype = ?", @mtype.media_id )
     @editor_url = root_url + encode( @editors[0].media_id ) #add helper
     if params[:context].nil? #find editor
       @editors.length > 0 ? redirect_to(@editor_url + "/" + params[:id])
@@ -40,9 +40,10 @@ class MediaController < ApplicationController
       type = Media.find( @editors[0].mtype )
       instance_variable_set( "@" + type.title.downcase,
                              Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", @media.id )[0] )
-      @title = "Edit mediatype '" + type.title + "' | kotoda.ma" #title should really be a in root_url/b/*a*
-#also not mediatype : type.title
       @data = Object.const_get( type.title.pluralize ).where( "media_id = ?", @media.id )[0]
+      @mtype.arguments[0].each do |w| # generalise for argument types? -> replace in update
+        @data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
+      end
       render "media/" + params[:context] + "/edit" #will mongo save my api??
     elsif @editors.length > 1 #more than one editor
       render :inline => "duplicate id issue :("
@@ -81,26 +82,16 @@ class MediaController < ApplicationController
     @media.mtype = mediatype.title
     @data = Object.const_get(@media.mtype.pluralize).new(params[:data])
     if @media.mtype == "Mediatype"
-      basetype = {"array" => "text"}
+      basetype = {"Array" => "Text"}
       args = @data.arguments[0].map {|x| [ x[0], basetype[x[1]] || x[1] ] }
       T.create( @media.title.downcase.pluralize.to_sym, {:media_id => :integer}.merge(@data.arguments[0]) )
       @data.arguments.map! {|x| x.map {|y| {y[0]=>y[1].capitalize} } }.flatten!
-      Object.const_set( @media.title.pluralize, Class.new(ActiveRecord::Base) {
-        establish_connection(:development)
-        belongs_to :media
-      } )
-      Object.const_set( @media.title, Class.new(ActiveRecord::Base) {
-        establish_connection(:development)
-      } )
-      @data.arguments.each do |x|
-        Object.const_get(@media.title).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
-      end
-      Media.class_eval "has_many :#{@media.title.downcase.pluralize}"
     end
     @media.save
     @data.media_id = @media.id
     @data.save
-    if @media.mtype == "Mediatype"
+    init_obj(@media.title) if @media.mtype == "Mediatype"
+    if @media.mtype == "Editor"
       path = Rails.root.join("app/views/media", @media.url)
       Dir.mkdir(path) unless File.exists?(path)
     end
