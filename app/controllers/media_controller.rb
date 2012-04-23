@@ -6,20 +6,20 @@ class MediaController < ApplicationController
 
   def show
     if params[:context].nil?
-      @media = Media.find( decode( params[:id] ) )
+      @media = Media.find( decode params[:id] )
       init_obj(@media.mtype) unless Object.const_defined? @media.mtype.pluralize
-      instance_variable_set("@" + @media.title.downcase.pluralize, Media.where( "mtype = ?", @media.title )) if ["Mediatype","Editor"].index(@media.mtype)
-      instance_variable_set( "@" + @media.mtype.downcase, Object.const_get(@media.mtype.pluralize).where("media_id = ?", @media.id)[0] ) # combine with @media
+      instance_variable_set("@" + @media.title.downcase.pluralize, Media.where( :mtype => @media.title )) if ["Mediatype","Editor"].index(@media.mtype)
+      instance_variable_set( "@" + @media.mtype.downcase, Object.const_get(@media.mtype.pluralize).where(:media_id => @media.id)[0] ) # combine with @media
       case @media.mtype
       when "Editor"
         new
       when "Mediatype"
         render :inline => Mediatypes.find(1).script, :layout => "application"
       else
-        render :inline => Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0].script
+        render :inline => Media.where(:title => @media.mtype)[0].mediatypes[0].script
       end
     else
-      @media = Media.find ( decode( params[:context] ) )
+      @media = Media.find ( decode params[:context] )
       @media.mtype == "Editor" ? edit : render("media/" + params[:context] + "/index")
     end
   end
@@ -27,20 +27,20 @@ class MediaController < ApplicationController
   def edit
     @showntype = "editor"
     @action = "update"
-    @media = Media.find( decode( params[:id] ) ) #find instance
+    @media = Media.find( decode params[:id] ) #find instance
     init_obj(@media.mtype) unless Object.const_defined? @media.mtype.pluralize
-    @mtype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0]
-    @editors = Editors.where( "mtype = ?", @mtype.media_id )
+    @mtype = Mediatypes.where( :media_id => Media.where(:title => @media.mtype)[0].id)[0] #FIXME define mediatypes as extensions of the media model
+#    @mtype = Media.where("title = ?", @media.mtype)[0].mediatypes[0]
+    @editors = Editors.where( :mtype => @mtype.media_id )
     @editor_url = root_url + encode( @editors[0].media_id ) #add helper
     if params[:context].nil? #find editor
       @editors.length > 0 ? redirect_to(@editor_url + "/" + params[:id])
-                          : new #this will become "Edit new editor"
+                          : new #this will become "Edit new editor" once 'create Editor' is working
     elsif @editors.length == 1 #edit instance with its editor
 #      redirect_to(root_url + params[:context]) if @editors[0].mtype != decode(params[:context])
-      type = Media.find( @editors[0].mtype )
-      instance_variable_set( "@" + type.title.downcase,
-                             Media.joins( type.title.downcase.pluralize.to_sym ).where( "media_id = ?", @media.id )[0] )
-      @data = Object.const_get( type.title.pluralize ).where( "media_id = ?", @media.id )[0]
+      instance_variable_set( "@" + @media.mtype.downcase,
+                             Media.joins(@media.mtype.downcase.pluralize.to_sym).where(:id => @media.id)[0] )
+      @data = Object.const_get( @media.mtype.pluralize ).where( :media_id => @media.id )[0]
       @mtype.arguments[0].each do |w| # generalise for argument types?
         @data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
       end
@@ -53,8 +53,8 @@ class MediaController < ApplicationController
   end
 
   def update
-    @media = Media.update( decode(params[:id]), params[:media] )
-    @mtype = Mediatypes.where("media_id = ?", Media.where("title = ?", @media.mtype)[0].id)[0]
+    @media = Media.update( decode params[:id], params[:media] )
+    @mtype = Mediatypes.where(:media_id => Media.where(:title => @media.mtype)[0].id)[0]
     @mtype.arguments[0].each do |w|
       params[:data][w[0].to_sym].map! {|x| x.map {|y| {y[0]=>y[1]} } } if w[1]=="Array"
     end
@@ -66,29 +66,28 @@ class MediaController < ApplicationController
   def new
     @showntype = "editor"
     @action = "create"
-    @editors = Editors.where("media_id = ?", decode(params[:id]))
-    mediatype = Media.find(@editors[0].mtype)
-    @media = Media.new(:title => "New " + mediatype.title.downcase, :info => "It's a new " + mediatype.title.downcase + "!", :url => "")
-    @data = Object.const_get(mediatype.title.pluralize).new
-    @data.arguments = "" if mediatype.title == "Mediatype"
-    instance_variable_set( "@" + mediatype.title.downcase, @media )
+    @mtype = Media.joins( :mediatypes ).where( :id => Editors.where( :media_id => decode(params[:id]) )[0].mtype )[0]
+    @media = Media.new(:title => "New " + @mtype.title.downcase, :info => "It's a new " + @mtype.title.downcase + "!", :url => "")
+    @data = Object.const_get(@mtype.title.pluralize).new
+    @data.arguments = "" if @mtype.title == "Mediatype"
+    instance_variable_set( "@" + @mtype.title.downcase, @media )
     render "media/" + params[:id] + "/edit"
   end
 
   def create
     @media = Media.new(params[:media])
-    @mtype = Media.find( Editors.where( "media_id = ?", decode(params[:id]) )[0].mtype )
+    @mtype = Media.find( Editors.where( :media_id => decode(params[:id]) )[0].mtype )
     @media.mtype = @mtype.title
     @data = Object.const_get(@media.mtype.pluralize).new(params[:data])
     if @media.mtype == "Mediatype" # move to mediatype editor?
       basetype = {"Array" => "Text"}
       args = @data.arguments[0].map {|x| [ x[0], basetype[x[1]] || x[1] ] }
       T.create( @media.title.downcase.pluralize.to_sym, {:media_id => :integer}.merge(@data.arguments[0]) )
-      @mtype.count += 1
-      @mtype.save
     end
-    @mtype.arguments[0].each do |w|
-      @data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } } if w[1]=="Array"
+    @mtype.count += 1
+    @mtype.save
+    Mediatypes.where("media_id = ?", @mtype.id)[0].arguments[0].each do |w|
+      @data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
     end
     @media.save
     @data.media_id = @media.id

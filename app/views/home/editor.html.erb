@@ -1,7 +1,10 @@
-<%- @title = "Edit mediatype '" + "Page" + "' | kotoda.ma" -%>
+<%-
+ @title = "Edit mediatype '" + @mtype.title + "' | kotoda.ma"
+ mtype = instance_variable_get( "@" + @mtype.title.downcase )
+-%>
 <% content_for :head do %>
 <script type="text/javascript">
-var eddisp={
+var eddisp = {
  frames:["code_result_frame","code_editor_frame"],
  display:["block","block"],
  menu:["Render","Code"],
@@ -43,7 +46,7 @@ form>div {
 </style>
 <%- end -%>
 <%= render "home/login" %>
-<%= form_for @page, :url => {:action => @action}, :html => {:class => "page"} do |p|%>
+<%= form_for mtype, :url => {:action => @action}, :html => {:class => "page"} do |p|%>
 <div><%= render "home/interface" %></div>
  <div>
   <div id="code_editor_actions" class="top">
