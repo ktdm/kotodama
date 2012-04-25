@@ -6,21 +6,22 @@ class MediaController < ApplicationController
 
   def show
     if params[:context].nil?
-      @media = Media.find( decode params[:id] )
-      init_obj(@media.mtype) unless Object.const_defined? @media.mtype.pluralize
-      instance_variable_set("@" + @media.title.downcase.pluralize, Media.where( :mtype => @media.title )) if ["Mediatype","Editor"].index(@media.mtype)
-      instance_variable_set( "@" + @media.mtype.downcase, Object.const_get(@media.mtype.pluralize).where(:media_id => @media.id)[0] ) # combine with @media
-      case @media.mtype
+      media = Media.find( decode params[:id] )
+      init_obj(media.mdata_type) unless Object.const_defined? media.mdata_type
+      @media = Object.const_get(media.mdata_type).find(media.mdata_id)
+      instance_variable_set("@" + @media.media[0].title.downcase.pluralize, Object.const_get(media.mdata_type).all) if ["Mediatype","Editor"].index(media.mdata_type) #.send?
+      instance_variable_set( "@" + media.mdata_type.downcase, @media.media[0] )
+      case media.mdata_type
       when "Editor"
         new
       when "Mediatype"
-        render :inline => Mediatypes.find(1).script, :layout => "application"
+        render :inline => Mediatype.find(1).script, :layout => "application"
       else
-        render :inline => Media.where(:title => @media.mtype)[0].mediatypes[0].script
+        render :inline => Mediatype.where(:title => media.mdata_type)[0].script
       end
     else
-      @media = Media.find ( decode params[:context] )
-      @media.mtype == "Editor" ? edit : render("media/" + params[:context] + "/index")
+      media = Media.find ( decode params[:context] )
+      media.mdata_type == "Editor" ? edit : render("media/" + params[:context] + "/index")
     end
   end
 

@@ -1,9 +1,9 @@
 <%-
- tt = @media.title.downcase
+ tt = @media.media[0].title.downcase
  @title = "All " + tt.pluralize + " | kotoda.ma"
  media = instance_variable_get("@" + tt.pluralize)
- mt = Media.where("title = ?", @media.mtype)[0]
- e = Media.find(Editors.where("mtype = ?", mt.id)[0].media_id)
+ mt = Media.where("title = ?", @media.media[0].type)[0]
+ e = Media.where(:mdata_id => Editors.where("mtype = ?", mt.id)[0].id)
 -%>
 <table id="<%= tt %>_page" class="page">
  <tr>
