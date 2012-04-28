@@ -9,7 +9,7 @@ class MediaController < ApplicationController
       media = Media.find( decode params[:id] )
       init_obj(media.mdata_type) unless Object.const_defined? media.mdata_type
       @media = Object.const_get(media.mdata_type).find(media.mdata_id)
-      instance_variable_set("@" + @media.media[0].title.downcase.pluralize, Object.const_get(media.mdata_type).all) if ["Mediatype","Editor"].index(media.mdata_type) #.send?
+      instance_variable_set("@" + @media.media[0].title.downcase.pluralize, Object.const_get(media.title).all) if ["Mediatype","Editor"].index(media.mdata_type) #.send?
       instance_variable_set( "@" + media.mdata_type.downcase, @media.media[0] )
       case media.mdata_type
       when "Editor"

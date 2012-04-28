@@ -2,8 +2,8 @@
  tt = @media.media[0].title.downcase
  @title = "All " + tt.pluralize + " | kotoda.ma"
  media = instance_variable_get("@" + tt.pluralize)
- mt = Media.where("title = ?", @media.media[0].type)[0]
- e = Media.where(:mdata_id => Editors.where("mtype = ?", mt.id)[0].id)
+ mt = Media.where("title = ?", @media.media[0].mdata_type)[0]
+ e = Media.where(:mdata_id => Editor.where("mtype = ?", mt.id)[0].id)
 -%>
 <table id="<%= tt %>_page" class="page">
  <tr>
@@ -16,13 +16,13 @@
      <td id="<%= tt %>_type_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
      <td id="<%= tt %>_type_title" class="data">
       <%= link_to "New " + tt, root_url %>
-      <%= link_to @media.author, "userpage.html" %>
-      <span><%= media.count.to_s + " instance" + (media.count==1 ? "" : "s") %></span>
+      <%= link_to @media.media[0].author, "userpage.html" %>
+      <span><%= @media.media[0].count.to_s + " instance" + (@media.media[0].count==1 ? "" : "s") %></span>
      </td>
     </tr>
     <tr>
     <td id="<%= tt %>_desc" colspan="2">
-     <span><%= @media.info %></span>
+     <span><%= @media.media[0].info %></span>
      <span>(<%= link_to mt.title, mt.url %>)</span>
     </td>
     </tr>
@@ -30,7 +30,7 @@
      <td class="actions" colspan="2">
       <a href="discussion.html">Discussion</a>
       <span class="view">
-       <%= link_to "View in " + mt.title.downcase + " editor", e.url %>
+       <%= link_to "View in " + mt.title.downcase + " editor", e[0].url %>
       </span>
      </td>
     </tr>

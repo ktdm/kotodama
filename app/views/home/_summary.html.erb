@@ -1,23 +1,23 @@
 <%-
  n = summary.id.to_s
- t = summary.mtype.downcase
- mt = Media.where("title = ?", summary.mtype)[0]
- e = Media.find(Editors.where("mtype = ?", mt.id)[0].media_id)
+ t = summary.media[0].mdata_type.downcase
+ mt = Media.where(:title => t.capitalize)[0]
+ e = Editor.where(:mtype => mt.id)[0].media[0]
 -%>
 <table id="<%= t + '_' + n %>" mediatype="page">
  <tr>
-  <td id="<%= t + '_' + n %>_thumb" class="thumb" rowspan="3"><%= link_to "Thumbnail", summary.url %></td>
+  <td id="<%= t + '_' + n %>_thumb" class="thumb" rowspan="3"><%= link_to "Thumbnail", summary.media[0].url %></td>
   <td id="<%= t + '_' + n %>_title" class="data">
-   <%= link_to summary.title, summary.url %>
-   <%= link_to summary.author, "userpage.html" %>
-   <span><%= summary.count.to_s + " view" + (summary.count==1 ? "" : "s") %></span>
+   <%= link_to summary.media[0].title, summary.media[0].url %>
+   <%= link_to summary.media[0].author, "userpage.html" %>
+   <span><%= summary.media[0].count.to_s + " view" + (summary.media[0].count==1 ? "" : "s") %></span>
   </td>
  </tr>
  <tr>
   <td id="<%= t + '_' + n %>_desc" colspan="2">
-   <span><%= summary.info %></span>
+   <span><%= summary.media[0].info %></span>
 <%- if ["talk","show"].include? params[:action] -%>
-   <span>(<%= link_to summary.mtype, mt.url %>)</span>
+   <span>(<%= link_to summary.media[0].mdata_type, mt.url %>)</span>
 <%- end -%>
   </td>
  </tr>
@@ -27,7 +27,7 @@
    <%= link_to "Discussion", talk_media_path(summary) %>
 <%- end -%>
    <span class="view">
-    <%= link_to "View in " + t + " editor", e.url + "/" + summary.url %>
+    <%= link_to "View in " + t + " editor", e.url + "/" + summary.media[0].url %>
    </span>
   </td>
  </tr>
