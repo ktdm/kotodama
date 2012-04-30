@@ -14,7 +14,6 @@
 ActiveRecord::Schema.define(:version => 20120305215730) do
 
   create_table "editors", :force => true do |t|
-    t.integer "media_id"
     t.integer "mtype"
     t.text    "forms"
     t.text    "script"
@@ -26,21 +25,19 @@ ActiveRecord::Schema.define(:version => 20120305215730) do
     t.string   "author",     :default => "kotoda.ma"
     t.integer  "count",      :default => 0
     t.text     "info"
-    t.integer  "mdata_id"
-    t.string   "mdata_type"
+    t.integer  "data_id"
+    t.string   "data_type"
     t.datetime "created_at",                          :null => false
     t.datetime "updated_at",                          :null => false
   end
 
   create_table "mediatypes", :force => true do |t|
-    t.integer "media_id"
-    t.text    "arguments"
-    t.text    "script"
+    t.text "arguments"
+    t.text "script"
   end
 
   create_table "pages", :force => true do |t|
-    t.integer "media_id"
-    t.text    "html"
+    t.text "html"
   end
 
   create_table "users", :force => true do |t|

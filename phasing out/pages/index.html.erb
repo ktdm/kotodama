@@ -1,5 +1,4 @@
-<% Media.create(:title => "editpage", :mtype => "Editor", :info => "Page editor.") %>
-<% Editors.create(:media_id => 6, :mtype => 5, :forms => []) %>
+<% Editor.create(:mtype => 5, :forms => []).media.create(:title => "editpage", :info => "Page editor.") %>
 <!------------------------------------------------------------------------------->
 <!--IMPORTANT! REMOVE THIS LINE AND ABOVE AFTER INITIALLY SAVING PAGE MEDIATYPE-->
 <table id="show" class="page">

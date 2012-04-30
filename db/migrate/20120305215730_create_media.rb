@@ -7,7 +7,7 @@ class CreateMedia < ActiveRecord::Migration
       t.integer :count, :default => 0
       t.text :info
 
-      t.references :mdata, :polymorphic => true
+      t.references :data, :polymorphic => true
 
       t.timestamps
     end
