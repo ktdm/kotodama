@@ -1,10 +1,13 @@
 <%-
- form[:pair]||={}
- n=form[:n]+1
--%>
-<div id="<%= (form[:pair]=={})?"form_stamp":("form_"+n.to_s) %>" class="hide">
+ form||={}
+ form_counter||=0
+ n=(form_counter+1).to_s
+ unless form=={}
+  -%><li><%-
+ end
+-%><div id="<%= (form=={})?"form_stamp":("form_"+n) %>" class="hide">
  <div class="navlist">
-  <div><%= form[:pair].keys[0] %></div>
+  <div><%= form.keys[0] %></div>
   <ul class="hr">
    <li style="background-color:orange">
     <a href="#" onclick="toggle_list(this);return false">Form</a>
@@ -16,6 +19,10 @@
   <div class="hr"><a href="#" onmousedown="menu({it:this.parentNode,list:{Insert:ins,Delete:del,Move:location.href}});return false" onclick="return false">Menus</a></div
   ><ul id="menu_items_1" mediatype="pagefrag"></ul>
  </div>
- <textarea class="editor_window"<%= (form[:pair]=={})?"":" name='data[forms][][" + form[:pair].keys[0] + "]' id='form_code_" + n.to_s + "'" %>><%= form[:pair].values[0] %></textarea>
- <div class="editor_window" style="display:none"<%= (form[:pair]=={})?"":" id='form_result_" + n.to_s + "'"%>></div>
-</div>
+ <textarea class="editor_window"<%= (form=={})?"":" name='editor[forms][][" + form.keys[0] + "]' id='form_code_" + n + "'" %>><%= form.values[0] %></textarea>
+ <div class="editor_window" style="display:none"<%= (form=={})?"":" id='form_result_" + n + "'"%>></div>
+</div><%-
+ unless form=={}
+  -%></li><%-
+ end
+-%>

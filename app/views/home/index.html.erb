@@ -41,7 +41,7 @@ body {
  <tr>
 
   <td id="nullaries" class="left">
-   <%= link_to "Pages", "c", :class => "section_title" %><br/>
+   <%= link_to "Pages", "e", :class => "section_title" %><br/>
 <%= render :partial => "home/summary", :collection => Media.where(:data_type => "Page").order("count DESC,created_at DESC").limit(2) %>
 
    <a href="#" class="section_title">Images</a>

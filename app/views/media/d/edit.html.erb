@@ -17,7 +17,7 @@ subframes=(function(a){
   j.push(["form_result_"+b,"form_code_"+b]);
  }
  return {ids:i, panels:j}
-})(<%= @data.forms.length %>),
+})(<%= @editor.data.forms.length %>),
 lists={
  forms_list: {
   insfunc: function() {
@@ -29,7 +29,7 @@ lists={
    n++;
    this.target.appendChild($("form_stamp").cloneNode(true)).setAttribute("id",r="form_"+n);
    $(r).childNodes[1].childNodes[1].innerHTML=this.insname;
-   $(r).childNodes[3].name="data[forms][][" + this.insname + "]";
+   $(r).childNodes[3].name="editor[forms][][" + this.insname + "]";
    $(r).style.display="table";
    subframes.ids.push(r);
    subframes.panels.push([$(r).childNodes[5].id="form_result_"+n,$(r).childNodes[3].id="form_code_"+n]);
@@ -182,23 +182,23 @@ form>div {
     </div>
    </div>
    <div>
-    <div id="editor_editor_canvas" class="bottom">
+    <div id="editor_editor_canvas" class="bottom"><%= fields_for @editor.data do |d| %>
 
      <div id="editor_code_frame">
-<%= text_area :data, :script, :class => "editor_window" %>
+<%= d.text_area :script, :class => "editor_window" %>
      </div>
      <div id="editor_forms_frame">
-      <ul id="forms_list" mediatype="form"><%= render :partial => "media/d/li", :collection => @data.forms %></ul>
+      <ul id="forms_list" mediatype="form"><%= render :partial => "media/d/form", :collection => @editor.data.forms %></ul>
      </div>
 
      <div id="editor_result_frame">
       <iframe id="editor_result" class="editor_window"></iframe>
      </div>
 
-    </div>
+    <%- end -%></div>
    </div>
 <%- end -%>
 
   <div id="ins_stamp" class="hide">Insert
    <input class="help_text" type="text" value="Mediatype" size="20" onkeypress="if (event.which==13) ins.call(this.parentNode.parentNode,this.value.charAt(0).toUpperCase()+this.value.slice(1))"/>
-  </div><%= render :partial => "media/d/form", :object => {:n=>0} %>
+  </div><%= render :partial => "media/d/form" %>

@@ -1,4 +1,4 @@
-<%- @title = "Edit mediatype '" + "Page" + "' | kotoda.ma" -%>
+<%- @title = "Edit mediatype '" + @media.data_type + "' | kotoda.ma" -%>
 <% content_for :head do %>
 <script type="text/javascript">
 var eddisp={
@@ -67,14 +67,14 @@ form>div {
   </div>
  </div>
  <div>
-  <div id="code_editor_canvas" class="bottom">
+  <div id="code_editor_canvas" class="bottom"><%= fields_for @page.data do |d| %>
 
-   <div id="code_editor_frame" style="height:100%"><%= text_area :data, :html, :id => "code_editor", :class => "editor_window" %></div>
+   <div id="code_editor_frame" style="height:100%"><%= d.text_area :html, :id => "code_editor", :class => "editor_window" %></div>
 
    <div id="code_result_frame" style="height:100%">
     <iframe id="code_result" class="editor_window"></iframe>
    </div>
 
-  </div>
+  <%- end -%></div>
  </div>
 <%- end -%>

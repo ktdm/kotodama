@@ -130,24 +130,24 @@ form>div {
     </div>
    </div>
    <div>
-    <div id="mediatype_editor_canvas" class="bottom">
+    <div id="mediatype_editor_canvas" class="bottom"><%= fields_for @mediatype.data do |d| %>
 
      <div id="mediatype_script_frame">
-<%= text_area :data, :script, :class => "editor_window" %>
+<%= d.text_area :script, :class => "editor_window" %>
      </div>
 
      <div id="mediatype_signature_frame">
-      <span style="display:<%= @data.arguments.length>1?'block':'none' %>">Function</span>
-      <ul id="signature_container" mediatype="mediatype"><%= render :partial => "media/b/li", :collection => @data.arguments %></ul>
+      <span style="display:<%= @mediatype.data.arguments.length>1?'block':'none' %>">Function</span>
+      <ul id="signature_container" mediatype="mediatype"><%= render :partial => "media/b/argument", :collection => @mediatype.data.arguments %></ul>
      </div>
 
      <div id="mediatype_render_frame"><iframe style="display:none">Remove when document.write</iframe>
       <iframe id="mediatype_render" class="editor_window"></iframe>
      </div>
 
-    </div>
+    <%- end -%></div>
    </div>
 <%- end -%>
 <div id="ins_stamp">Instance of
  <input class="help_text" type="text" size="50" onkeypress="if (event.which==13) ins.call(this.parentNode.parentNode,this.value.charAt(0).toUpperCase()+this.value.slice(1))"/>
-</div><%= render :partial => "media/b/argument", :object => {:n=>0} %>
+</div><%= render :partial => "media/b/argument" %>

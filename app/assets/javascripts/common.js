@@ -123,7 +123,7 @@ function List(base) {
  this.length=k+1;
  this.type=$(base).getAttribute("mediatype");//move these two to lists
  this.typelabel=(function(n){return n.charAt(0).toUpperCase()+n.slice(1)})(this.type);
- this.nextindex=(this.last)?1+parseFloat((c=this.last.firstChild.id).slice(c.indexOf("_")+1)):1;//unsafe...
+ this.nextindex=(this.last)?1+parseFloat((c=this.last.firstChild.id).slice(c.indexOf("_")+1)):1;//unsafe firstChild must not be a text node
 }
 
 function ins() {
