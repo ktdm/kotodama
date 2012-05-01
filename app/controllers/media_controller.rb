@@ -13,61 +13,67 @@ class MediaController < ApplicationController
       case media.data_type
       when "Editor"
         new
-      when "Mediatype"
-        render :inline => Mediatype.find(1).script, :layout => "application"
       else
-        render :inline => Media.where(:title => media.data_type, :data_type => "Mediatype")[0].data.script
+        render :inline => Media.where(:title => media.data_type, :data_type => "Mediatype")[0].data.script, :layout => (media.data_type == "Mediatype" ? "application" : false ) #media.author = kotoda.ma?
       end
     else
       media = Media.find ( decode params[:context] )
-      media.data_type == "Editor" ? edit : redirect_to(root_url + params[:id] + "/edit")
+      media.data_type == "Editor" ? edit : redirect_to(edit_media_url)
     end
   end
 
   def edit
     @showntype = "editor"
     @action = "update"
-    media = Media.find( decode params[:id] )
-    init_obj(media.data_type) unless Object.const_defined? media.data_type
-    mediatype = Media.where(:title => media.data_type, :data_type => "Mediatype")[0]
-    editors = Editor.where(:mtype => mediatype.id)
+    @_media = Media.find( decode params[:id] )
+    init_obj(@_media.data_type) unless Object.const_defined? @_media.data_type
+    @_mediatype = Media.where(:title => @_media.data_type, :data_type => "Mediatype")[0]
+    editors = Editor.where(:mtype => @_mediatype.id)
+    @_editor = editors[0] #generalise
     if params[:context].nil?
-      editors.length > 0 ? redirect_to(root_url + encode( editors[0].media[0].id ) + "/" + params[:id])
+      editors.length > 0 ? redirect_to( root_url + encode( @_editor.media[0].id ) + "/" + params[:id] )
                           : new #this will become "Edit new editor" once 'create Editor' is working
     elsif editors.length == 1
-      if editors[0].media[0].id != decode(params[:context])
-        redirect_to(root_url + params[:id] + "/edit")
+      if @_editor.media[0].id != decode(params[:context])
+        redirect_to edit_media_url
       else
-        mediatype.data.arguments[0].each do |w| # generalise for argument types?
-          media.data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
+        @_mediatype.data.arguments[0].each do |w| # generalise for argument types? *move to models*
+          @_media.data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
         end
-        @media = instance_variable_set( "@" + media.data_type.downcase, media )
-        render "media/" + params[:context] + "/edit" #will mongo save my api??
+        instance_variable_set( "@" + @_media.data_type.downcase, @_media )
+        #if @_editor.forms.length > 0
+        #  render :inline => Media.find(3).data.script, :layout => "application"
+        #else
+          render "media/" + params[:context] + "/edit" #will mongo save my api??
+        #end
       end
     elsif editors.length > 1
       render :inline => "duplicate id issue :("
     else
-      redirect_to root_url + params[:id] + "/edit"
+      redirect_to(edit_media_url)
     end
   end
 
   def update
     media = Media.update( decode(params[:id]), params[:media] )
-    mediatype = Media.where(:title => media.data_type)[0]
+    mediatype = Media.where(:title => media.data_type, :data_type => "Mediatype")[0]
     mediatype.data.arguments[0].each do |w|
       params[mediatype.title.downcase.to_sym][w[0].to_sym].map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
     end
     Object.const_get(mediatype.title).update(media.data_id, params[mediatype.title.downcase.to_sym]).save
     media.save
-    redirect_to edit_media_url
+#Add + remove columns if mediatype.title=Mediatype
+    redirect_to(edit_media_url)
   end
 
   def new
     @showntype = "editor"
     @action = "create"
-    mediatype = Media.find( Media.find( decode(params[:id]) ).data.mtype )
-    mt = mediatype.title
-    instance_variable_set( "@" + mt.downcase, Media.new(:title => "New " + mt.downcase, :info => "It's a new " + mt.downcase + "!", :url => "") ).data = Object.const_get(mt).new
+    @_editor = Media.find( decode(params[:id]) ).data
+    @_mediatype = Media.find( @_editor.mtype )
+    mt = @_mediatype.title
+    @_media = instance_variable_set( "@" + mt.downcase, Media.new(:title => "New " + mt.downcase, :info => "It's a new " + mt.downcase + "!", :url => "") )
+    @_media.data = Object.const_get(mt).new
     render "media/" + params[:id] + "/edit"
   end
 

@@ -1,9 +1,9 @@
 module InitMedia
   def init_obj(title)
-    Object.const_set( title.pluralize, Class.new(ActiveRecord::Base) {
-      establish_connection(:development)
-      has_many :media, :as => :data
-    } )
+#    Object.const_set( title.pluralize, Class.new(ActiveRecord::Base) {
+#      establish_connection(:development)
+#      has_many :media, :as => :data
+#    } )
     Object.const_set( title, Class.new(ActiveRecord::Base) {
       establish_connection(:development)
       has_many :media, :as => :data

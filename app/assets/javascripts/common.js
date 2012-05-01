@@ -214,7 +214,7 @@ function init() {
  for (i=0;i<views.length;i++) views[i].onmousedown=viewlinks;
  if (window.eddisp) {
   for (j in eddisp.frames) {
-   $(eddisp.frames[j]).style.display=(j==="0"?eddisp.display[j]:"none");
+   $(eddisp.frames[j]).style.display=(j==eddisp.frames.length-1?eddisp.display[j]:"none");
   }
   eddisp.finalfunc(eddisp.menu[0])
  }
