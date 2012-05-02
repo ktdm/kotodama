@@ -74,8 +74,8 @@ form>div {
     <%= link_to "New", root_url + @_editor.media[0].url %>
     <%- @_editor.forms.each do |f| -%><a href="#" onclick="toggle_frames(this.firstChild.data)"><%= f.keys[0] %></a><%- end -%>
    </div>
-<%- @_editor.forms.take_while {|x| true }.each do |f| -%>
-   <div id="<%= f.keys[0] _operations" class="actions">
+<%- @_editor.forms.take_while {|x| x.values[0] == "Array" }.each do |f| -%>
+   <div id="<%= f.keys[0] %>_operations" class="actions">
     <a href="#" onclick="ins.call($('signature_container'))">Insert</a>
     <a href="#" onclick="del.call($('signature_container'))">Delete</a>
     <a href="#">Move</a>

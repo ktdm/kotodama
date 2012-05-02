@@ -1,6 +1,6 @@
 <%-
  tt = @mediatype.title.downcase
- @title = "All " + tt.pluralize + " | kotoda.ma"
+ @title = "All " + tt.pluralize
  media = instance_variable_get("@" + tt.pluralize)
  mt = Media.where("title = ?", @mediatype.data_type)[0]
  e = Editor.where(:mtype => mt.id)[0].media

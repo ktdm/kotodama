@@ -19,7 +19,7 @@ class MediaController < ApplicationController
       end
     else
       @_media = Media.find ( decode params[:context] )
-      @_media.data_type == "Editor" ? edit : redirect_to(edit_media_url)
+      @_media.data_type == "Editor" ? edit : redirect_to( root_url + Editor.where(:mtype => mediatype.title)[0].url + "/" + params[:id] )
     end
   end
 
@@ -35,17 +35,14 @@ class MediaController < ApplicationController
                           : new #this will become "Edit new editor" once 'create Editor' is working
     elsif editors.length == 1
       if @_editor.media[0].id != decode(params[:context])
-        redirect_to edit_media_url
+        redirect_to( root_url + encode( @_editor.media[0].id ) + "/" + params[:id] )
       else
         @_mediatype.data.arguments.each do |w| # generalise for argument types? *move to models*
           @_media.data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
         end
         instance_variable_set( "@" + @_media.data_type.downcase, @_media )
-        if @_mediatype.title != "Editor" #@_editor.forms.length > 0
-          render :inline => Media.find(3).data.script, :layout => "application"
-        else
-          render "media/" + params[:context] + "/edit" #will mongo save my api??
-        end
+        render :inline => Media.find(3).data.script, :layout => "application"
+        #render "media/" + params[:context] + "/edit" #will mongo save my api??
       end
     elsif editors.length > 1
       render :inline => "duplicate id issue :("
@@ -65,7 +62,7 @@ class MediaController < ApplicationController
     media.data.save
 #render :inline => media.data.forms.to_s
 #Add + remove columns if mediatype.title=Mediatype
-    redirect_to(edit_media_url)
+    redirect_to( root_url + Editor.where(:mtype => mediatype.title)[0].url + "/" + params[:id] )
   end
 
   def new

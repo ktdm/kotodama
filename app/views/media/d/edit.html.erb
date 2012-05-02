@@ -198,13 +198,16 @@ form>div {
     </div>
    </div>
    <div>
-    <div id="editor_editor_canvas" class="bottom"><%= fields_for @editor.data do |d| %>
+    <div id="editor_editor_canvas" class="bottom"><%= fields_for @editor.data do |data| %>
 
      <div id="editor_code_frame">
-<%= d.text_area :script, :class => "editor_window" %>
+<%= data.text_area :script, :class => "editor_window" %>
      </div>
      <div id="editor_forms_frame">
       <ul id="forms_list" mediatype="form"><%= render :partial => "media/d/form", :collection => @editor.data.forms %></ul>
+      <div id="ins_stamp" class="hide">Insert
+       <input class="help_text" type="text" value="Mediatype" size="20" onkeypress="if (event.which==13) ins.call(this.parentNode.parentNode,this.value.charAt(0).toUpperCase()+this.value.slice(1))"/>
+      </div><%= render :partial => "media/d/form" %>
      </div>
 
      <div id="editor_result_frame">
@@ -214,7 +217,3 @@ form>div {
     <%- end -%></div>
    </div>
 <%- end -%>
-
-  <div id="ins_stamp" class="hide">Insert
-   <input class="help_text" type="text" value="Mediatype" size="20" onkeypress="if (event.which==13) ins.call(this.parentNode.parentNode,this.value.charAt(0).toUpperCase()+this.value.slice(1))"/>
-  </div><%= render :partial => "media/d/form" %>
