@@ -5,6 +5,14 @@
 -%>
 <% content_for :head do %>
 <script type="text/javascript">
+function toggle_frames(it) {
+ for (i in eddisp.frames) if ($(eddisp.frames[i]).style.display!=="none") break;
+ if (eddisp.menu[i]==it) return false;
+ $(eddisp.frames[i]).style.display="none";
+ $(eddisp.frames[j=eddisp.menu.indexOf(it)]).style.display=eddisp.display[j];
+ if (eddisp.finalfunc) eddisp.finalfunc(it);
+ return eddisp.frames[i];
+}
 var eddisp={
  frames:<%= @_editor.forms.map {|x| x.keys[0].downcase + "_frame" }.to_s.html_safe %>,
  display:<%= @_editor.forms.map {|x| "block" }.to_s.html_safe %>,
@@ -38,15 +46,23 @@ form>div {
  display:table-cell;
  padding:5px
 }
-</style>
-<%- end -%>
+</style><%-
+ end
+
+ content_for :onload do
+-%> document.documentElement.className="noscroll";
+ for (var j in eddisp.frames) $(eddisp.frames[j]).style.display="none";
+ $(eddisp.frames[j]).style.display=eddisp.display[j];
+ eddisp.finalfunc(eddisp.menu[j])<%-
+ end
+-%>
 <%= render "home/login" %>
-<%= form_for instance_variable_get("@" + mt), :url => {:action => @action}, :html => {:class => "page"} do |p|%>
+<%= form_for @_media, :url => {:action => @action}, :html => {:class => "page"} do |p|%>
 <div><%= render "home/interface" %></div>
  <div>
   <div id="editor_actions" class="top">
    <span class="section_title"
-    ><%= link_to mt.capitalize, "/c" %>: <%= link_to instance_variable_get("@" + mt).title, "/" + instance_variable_get("@" + mt).url, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= p.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
+    ><%= link_to mt.capitalize, root_url + @_mediatype.url %>: <%= link_to @_media.title, root_url + @_media.url, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= p.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
    </span>
    <span class="section_info">
     <span onclick="textedit(this,true)">Info</span
@@ -55,13 +71,20 @@ form>div {
    </span>
    <div id="menu_bar" class="actions">
     <a href="#" onclick="document.forms[1].submit()">Save</a>
-    <%= link_to "New", "d" %>
+    <%= link_to "New", root_url + @_editor.media[0].url %>
     <%- @_editor.forms.each do |f| -%><a href="#" onclick="toggle_frames(this.firstChild.data)"><%= f.keys[0] %></a><%- end -%>
    </div>
+<%- @_editor.forms.take_while {|x| false }.each do |f| -%>
+   <div id="argument_operations" class="actions">
+    <a href="#" onclick="ins.call($('signature_container'))">Insert</a>
+    <a href="#" onclick="del.call($('signature_container'))">Delete</a>
+    <a href="#">Move</a>
+   </div>
+<%- end -%>
   </div>
  </div>
  <div>
-  <div id="canvas" class="bottom"><%= fields_for instance_variable_get("@" + mt).data do |data| %>
+  <div id="canvas" class="bottom"><%= fields_for @_media.data do |data| %>
    <%= render :partial => "home/frame", :collection => @_editor.forms, :locals => {:data => data} %>
   <%- end -%></div>
  </div>

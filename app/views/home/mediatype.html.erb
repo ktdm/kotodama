@@ -4,7 +4,22 @@
  media = instance_variable_get("@" + tt.pluralize)
  mt = Media.where("title = ?", @mediatype.data_type)[0]
  e = Editor.where(:mtype => mt.id)[0].media
--%>
+
+ content_for :head do
+-%><script type="text/javascript">
+var editor={
+ mediatype:{Editmediatype:"/b"},
+ <%= tt %>:{<%= Editor.where(:mtype => @mediatype.id).map do |ee|
+ ee.media[0].title + ":\"/" + ee.media[0].url + "\""
+end[0].html_safe %>}
+};
+</script><%-
+ end
+
+ content_for :onload do
+  -%> var i,views=document.getElementsByClassName("view");
+ for (i=0;i<views.length;i++) views[i].onmousedown=viewlinks;<%-
+ end -%>
 <table id="<%= tt %>_page" class="page">
  <tr>
 

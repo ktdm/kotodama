@@ -1,6 +1,7 @@
 <% content_for :head do -%>
 <script type="text/javascript">
-if (document.cookie) window.location="home.html"
+if (document.cookie) window.location="home.html";
+var editor={page:{Editpage:"/f"}}
 </script>
 <style type="text/css">
 body {
@@ -32,7 +33,10 @@ body {
 .command_list {
  margin:20px
 }
-</style>
+</style><%-
+ end
+ content_for :onload do -%> var i,views=document.getElementsByClassName("view");
+ for (i=0;i<views.length;i++) views[i].onmousedown=viewlinks;
 <%- end -%>
 <table id="index_showcase" class="page">
  <tr>

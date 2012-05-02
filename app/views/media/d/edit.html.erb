@@ -1,6 +1,14 @@
 <%- @title = "Edit " + @_media.data_type.downcase + " '" + @_media.title + "'" -%>
 <% content_for :head do -%>
   <script type="text/javascript">
+function toggle_frames(it) {
+ for (i in eddisp.frames) if ($(eddisp.frames[i]).style.display!=="none") break;
+ if (eddisp.menu[i]==it) return false;
+ $(eddisp.frames[i]).style.display="none";
+ $(eddisp.frames[j=eddisp.menu.indexOf(it)]).style.display=eddisp.display[j];
+ if (eddisp.finalfunc) eddisp.finalfunc(it);
+ return eddisp.frames[i];
+}
 var eddisp={
  frames:["editor_result_frame","editor_forms_frame","editor_code_frame"],
  menu:["Render","Forms","Convert"],
@@ -150,9 +158,17 @@ form>div {
  display:table-cell;
  padding:5px
 }
-  </style>
-<%- end -%>
-<% content_for :onload do %>toggle_frames(eddisp.menu[0])<% end -%>
+  </style><%-
+ end
+
+ content_for :onload do
+-%> document.documentElement.className="noscroll";
+ for (var j in eddisp.frames) $(eddisp.frames[j]).style.display="none";
+ $(eddisp.frames[j]).style.display=eddisp.display[j];
+ eddisp.finalfunc(eddisp.menu[j])
+ toggle_frames(eddisp.menu[0])<%-
+ end
+-%>
 <%= render "home/login" %>
 <%= form_for @editor, :url => {:action => @action}, :html => {:class => "page"} do |e|%>
 <div><%= render "home/interface" %></div>
@@ -160,7 +176,7 @@ form>div {
    <div>
     <div id="editor_editor_actions" class="top">
      <span class="section_title"
-      ><%= link_to "Editor", "/c" %>: <%= link_to @editor.title, media_path, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= e.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
+      ><%= link_to "Editor", root_url + @_mediatype.url %>: <%= link_to @editor.title, media_path, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= e.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
      </span>
      <span class="section_info">
       <span onclick="textedit(this,true)">Info</span
@@ -169,7 +185,7 @@ form>div {
      </span>
      <div id="editor_editor_menu" class="actions">
       <a href="#" onclick="document.forms[1].submit()">Save</a>
-      <%= link_to "New", @editor_url %>
+      <%= link_to "New", root_url + @_editor.media[0].url %>
       <a href="#" onclick="toggle_frames(this.firstChild.data)">Convert</a>
       <a href="#" onclick="toggle_frames(this.firstChild.data)">Forms</a>
       <a href="#" onclick="toggle_frames(this.firstChild.data)">Render</a>

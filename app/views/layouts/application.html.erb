@@ -1,5 +1,6 @@
+<%- mediatype = (@_mediatype ? (@_editor ? "editor" : @_mediatype.title.downcase) : "home") -%>
 <!DOCTYPE html>
-<html lang="en-AU" mediatype="<%= @showntype %>">
+<html lang="en-AU" mediatype="<%= mediatype %>">
 <head>
 <title><%= @title %> | kotoda.ma</title>
 <%= stylesheet_link_tag :common, :media => "all" %>
@@ -7,9 +8,16 @@
 <%= favicon_link_tag %>
 <%= csrf_meta_tags %>
 <%= yield :head %>
+<script type="text/javascript">
+function init() {
+ render_login();
+ nofollow();
+<%= yield :onload %>
+}
+</script>
 </head>
-<body onload="init();<%= yield :onload %>">
-<%- unless @showntype=="editor" -%>
+<body onload="init()">
+<%- unless mediatype=="editor" -%>
 <%= render "home/login" %>
 <%= render "home/interface" %>
 <%- end -%>

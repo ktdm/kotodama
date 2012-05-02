@@ -18,18 +18,12 @@ function nofollow() {
   }
  }
 }
-var editor={
- mediatype:{editmediatype:"editmediatype.html"},
- editor:{editeditor:"editeditor.html"},
- command:{editcommand:"editcommand.html"},
- page:{editcode:"editcode.html"}
-};
-function viewlinks() {
+function viewlinks() { //goes with summary
  var n,type;
  for (n=this;n;n=n.parentNode) if (type=n.getAttribute("mediatype")) break;
  menu({
   it: this,
-  list: editor[type],
+  list: editor[type], //TODO append to each record value "/"+this.childNodes[1].href after the slash
   disarm: function() {
    if ((t=(b=$("here").parentNode).firstChild).innerHTML==="All editors") {
     b.removeChild(t);
@@ -39,7 +33,7 @@ function viewlinks() {
   timer: function(){
    (t=$("here").parentNode).childNodes[1].style.display="none";
    ae=t.insertBefore(document.createElement("a"),t.firstChild);
-   ae.href="show_editors.html";
+   ae.href="/c";
    ae.className="menuchoice";
    ae.onmouseup=new Function("location.href='"+ae.href+"'");
    ae.innerHTML="All editors"
@@ -75,13 +69,6 @@ function toggle() {//please kill me
   case 1: if (ar[0]!==ar[1]) $(ar[0]).style.display=a?r[1]:"block";
  }
  return a;
-}
-function toggle_frames(it) {
- for (i in eddisp.frames) if ($(eddisp.frames[i]).style.display!=="none") break;
- $(eddisp.frames[i]).style.display="none";
- $(eddisp.frames[j=eddisp.menu.indexOf(it)]).style.display=eddisp.display[j];
- if (eddisp.finalfunc) eddisp.finalfunc(it);
- return eddisp.frames[i];
 }
 
 function stringedit(it,start) {
@@ -205,20 +192,6 @@ function menu(a) {
   this.onmouseup=null
  };
  if ("timer" in a) setTimeout(a.timer,1000)
-}
-
-function init() {
- render_login();
- nofollow();
- var i,j,views=document.getElementsByClassName("view");
- for (i=0;i<views.length;i++) views[i].onmousedown=viewlinks;
- if (window.eddisp) {
-  for (j in eddisp.frames) {
-   $(eddisp.frames[j]).style.display=(j==eddisp.frames.length-1?eddisp.display[j]:"none");
-  }
-  eddisp.finalfunc(eddisp.menu[0])
- }
- if ((doc=document.documentElement).getAttribute("mediatype")==="editor") doc.className="noscroll";
 }
 
 function render_login() {
