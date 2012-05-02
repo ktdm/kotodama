@@ -41,7 +41,7 @@ class MediaController < ApplicationController
           @_media.data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
         end
         instance_variable_set( "@" + @_media.data_type.downcase, @_media )
-        if @_mediatype.title == "Page" #@_editor.forms.length > 0
+        if @_mediatype.title != "Editor" #@_editor.forms.length > 0
           render :inline => Media.find(3).data.script, :layout => "application"
         else
           render "media/" + params[:context] + "/edit" #will mongo save my api??
