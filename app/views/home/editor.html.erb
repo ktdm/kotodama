@@ -1,31 +1,37 @@
-<%- @title = "Edit " + @media.data_type.downcase + " '" + @media.title + "' | kotoda.ma" -%>
+<%-
+ mt = @_media.data_type.downcase
+ @title = "Edit " + ((@_media.url!="")?mt + " '" + @_media.title + "'":"new " + mt)
+ @_editor.forms << {"Render"=>"<iframe id=\"render\" class=\"editor_window\"></iframe>"}
+-%>
 <% content_for :head do %>
 <script type="text/javascript">
+function toggle_frames(it) {
+ for (i in eddisp.frames) if ($(eddisp.frames[i]).style.display!=="none") break;
+ if (eddisp.menu[i]==it) return false;
+ $(eddisp.frames[i]).style.display="none";
+ $(eddisp.frames[j=eddisp.menu.indexOf(it)]).style.display=eddisp.display[j];
+ if (eddisp.finalfunc) eddisp.finalfunc(it);
+ return eddisp.frames[i];
+}
 var eddisp={
- frames:["code_result_frame","code_editor_frame"],
- display:["block","block"],
- menu:["Render","Code"],
- finalfunc:function(a) {
-  if (a==="Render") {
-   b=$("code_result").contentWindow.document;
-   b.write($("code_editor").value);
-   b.close();
-  }
- }
+ frames:<%= @_editor.forms.map {|x| x.keys[0].downcase + "_frame" }.to_s.html_safe %>,
+ display:<%= @_editor.forms.map {|x| "block" }.to_s.html_safe %>,
+ menu:<%= @_editor.forms.map {|x| x.keys[0] }.to_s.html_safe %>
 }
 </script>
+<%= render :inline => @_editor.script %>
 <style type="text/css">
-#code_editor_menu {
+#menu_bar {
  float:right
 }
-#code_editor_canvas>* {
+#canvas>* {
  height:100%
 }
 .page {
  margin-bottom:0px
 }
 .bottom {
- padding:5px;
+ padding:5px
 }
 .dropdown {
  display:none
@@ -40,41 +46,47 @@ form>div {
  display:table-cell;
  padding:5px
 }
-</style>
-<%- end -%>
+</style><%-
+ end
+
+ content_for :onload do
+-%> document.documentElement.className="noscroll";
+ for (j in eddisp.frames) $(eddisp.frames[j]).style.display="none";
+ $(eddisp.frames[j]).style.display=eddisp.display[j];
+ //eddisp.finalfunc(eddisp.menu[j]);
+ $("render").src = window.location.href.replace(/^.*\//, '/')<%-
+ end
+-%>
 <%= render "home/login" %>
-<%= form_for @page, :url => {:action => @action}, :html => {:class => "page"} do |p|%>
+<%= form_for instance_variable_get("@" + mt), :url => {:action => @action}, :html => {:class => "page"} do |p|%>
 <div><%= render "home/interface" %></div>
  <div>
-  <div id="code_editor_actions" class="top">
-
+  <div id="editor_actions" class="top">
    <span class="section_title"
-    ><%= link_to "Page", "/c" %>: <%= link_to @page.title, "/" + @page.url, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= p.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
+    ><%= link_to mt.capitalize, root_url + @_mediatype.url %>: <%= link_to @_media.title, root_url + @_media.url, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= p.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
    </span>
    <span class="section_info">
     <span onclick="textedit(this,true)">Info</span
     ><div class="dropdown">
 <%= p.text_area :info, :onkeypress => "if (event.which===13&&!event.shiftKey) {textedit(this.parentNode,false);return false}", :onblur => "if ((p=this.parentNode).style.display!=='none') textedit(p,false)" %></div>
    </span>
-
-   <div id="code_editor_menu" class="actions">
+   <div id="menu_bar" class="actions">
     <a href="#" onclick="document.forms[1].submit()">Save</a>
-    <%= link_to "New", "d" %>
-    <a href="#" onclick="toggle_frames(this.firstChild.data)">Render</a>
-    <a href="#" onclick="toggle_frames(this.firstChild.data)">Code</a>
+    <%= link_to "New", root_url + @_editor.media[0].url %>
+    <%- @_editor.forms.each do |f| -%><a href="#" onclick="toggle_frames(this.firstChild.data)"><%= f.keys[0] %></a><%- end -%>
    </div>
-
+<%- @_mediatype.data.arguments.select {|x| x.values[0] == "Array" }.each do |f| -%>
+   <div id="<%= f.keys[0].downcase.singularize %>_operations" class="actions">
+    <a href="#" onclick="ins.call($('<%= f.keys[0].downcase %>_container'))">Insert</a>
+    <a href="#" onclick="del.call($('<%= f.keys[0].downcase %>_container'))">Delete</a>
+    <a href="#">Move</a>
+   </div>
+<%- end -%>
   </div>
  </div>
  <div>
-  <div id="code_editor_canvas" class="bottom"><%= fields_for @page.data do |d| %>
-
-   <div id="code_editor_frame" style="height:100%"><%= d.text_area :html, :id => "code_editor", :class => "editor_window" %></div>
-
-   <div id="code_result_frame" style="height:100%">
-    <iframe id="code_result" class="editor_window"></iframe>
-   </div>
-
+  <div id="canvas" class="bottom"><%= fields_for instance_variable_get("@" + mt).data do |data| %>
+   <%= render :partial => "home/frame", :collection => @_editor.forms, :locals => {:data => data} %>
   <%- end -%></div>
  </div>
 <%- end -%>

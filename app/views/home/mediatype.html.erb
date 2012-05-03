@@ -43,9 +43,9 @@ end[0].html_safe %>}
     </tr>
     <tr>
      <td class="actions" colspan="2">
-      <a href="discussion.html">Discussion</a>
+      <%= link_to "Discussion", talk_media_url(@mediatype.url) %>
       <span class="view">
-       <%= link_to "View in " + mt.title.downcase + " editor", e[0].url %>
+       <%= link_to "View in " + mt.title.downcase + " editor", edit_media_url(@mediatype.url) %>
       </span>
      </td>
     </tr>

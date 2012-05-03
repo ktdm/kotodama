@@ -16,18 +16,16 @@
  <tr>
   <td id="<%= t + '_' + n %>_desc" colspan="2">
    <span><%= summary.info %></span>
-<%- if ["talk","show"].include? params[:action] -%>
+<%- if true -%>
    <span>(<%= link_to summary.data_type, mt.url %>)</span>
 <%- end -%>
   </td>
  </tr>
  <tr>
   <td class="actions" colspan="2">
-<%- if ["index"].include? params[:action] -%>
-   <%= link_to "Discussion", talk_media_path(summary) %>
-<%- end -%>
+   <%= link_to "Discussion", talk_media_path(summary.url) %>
    <span class="view">
-    <%= link_to "View in " + t + " editor", e.url + "/" + summary.url %>
+    <%= link_to "View in " + t + " editor", edit_media_path(summary.url) %>
    </span>
   </td>
  </tr>

@@ -1,6 +1,6 @@
 Rubydama01::Application.routes.draw do
 
-  root :to => 'home#index'
+  root :to => 'media#show'
 
   resources :media,
             :path => '',
@@ -10,6 +10,7 @@ Rubydama01::Application.routes.draw do
     post :create, :on => :member
   end
 
-  match ":context/:id" => "media#show"
+  get ":context/:id" => "media#show",
+       :constraints => { :context => /[a-zA-Z0-9_\-]+/, :id => /[a-zA-Z0-9_\-]+/ }
 
 end
