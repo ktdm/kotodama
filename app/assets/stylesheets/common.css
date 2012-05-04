@@ -30,9 +30,6 @@ li {
 a:link {
  text-decoration:none
 }
-.noscroll {
- height:100%
-}
 [class~="hide"] {
  display:none
 }

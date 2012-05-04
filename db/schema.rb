@@ -20,15 +20,17 @@ ActiveRecord::Schema.define(:version => 20120305215730) do
   end
 
   create_table "media", :force => true do |t|
-    t.string   "title",                               :null => false
+    t.string   "title",                                 :null => false
     t.string   "url"
-    t.string   "author",     :default => "kotoda.ma"
-    t.integer  "count",      :default => 0
+    t.string   "author",       :default => "kotoda.ma"
+    t.integer  "count",        :default => 0
     t.text     "info"
     t.integer  "data_id"
     t.string   "data_type"
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
+    t.integer  "mediatype_id"
+    t.integer  "editor_id"
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
   end
 
   create_table "mediatypes", :force => true do |t|

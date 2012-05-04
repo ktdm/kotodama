@@ -1,4 +1,4 @@
-<%- mediatype = (@_mediatype ? (@_editor ? "editor" : @_mediatype.title.downcase) : "home") -%>
+<%- mediatype = (@_media ? (@_editor ? "editor" : @_media.mediatype.title.downcase) : "home") -%>
 <!DOCTYPE html>
 <html lang="en-AU" mediatype="<%= mediatype %>">
 <head>

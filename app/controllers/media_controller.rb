@@ -18,7 +18,7 @@ class MediaController < ApplicationController
         new
       else
         @_mediatype = Media.where(:title => @_media.data_type, :data_type => "Mediatype")[0]
-        render :inline => @_mediatype.data.script, :layout => (@_media.data_type == "Mediatype" ? "application" : false ) #media.author = kotoda.ma?
+        render :inline => @_mediatype.data.script, :layout => ( ["Mediatype", "Editor"].include?(@_media.data_type) ? "application" : false ) #media.author = kotoda.ma?
       end
     else
       @_media = Media.find ( decode params[:context] )
@@ -27,21 +27,21 @@ class MediaController < ApplicationController
   end
 
   def edit
-    @action = "update"
     @_media = Media.find( decode params[:id] )
     init_obj(@_media.data_type) unless Object.const_defined? @_media.data_type
-    @_mediatype = Media.where(:title => @_media.data_type, :data_type => "Mediatype")[0]
-    editors = Editor.where(:mtype => @_mediatype.id)
+    @_media.mediatype = Media.where(:title => @_media.data_type, :data_type => "Mediatype")[0]
+    editors = Editor.where(:mtype => @_media.mediatype.id)
     if params[:context].nil?
       editors.length > 0 ? redirect_to( root_url + editors[0].media[0].url + "/" + params[:id] ) : redirect_to( root_url + encode(4) )
     else
       @_editor = Media.find(decode params[:context]).data
-      if @_editor.mtype == @_mediatype.id
-        @_mediatype.data.arguments.each do |w| # generalise for argument types? *move to models*
+      if @_editor.mtype == @_media.mediatype.id
+        @_media.mediatype.data.arguments.each do |w| # generalise for argument types? *move to models*
           @_media.data.send(w[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w[1]=="Array"
         end
         instance_variable_set( "@" + @_media.data_type.downcase, @_media )
-        render :inline => Media.find(3).data.script, :layout => "application"
+        render "db/seeddata/em", :layout => "application"
+        #render :inline => Media.find(3).data.script, :layout => "application"
       else
         redirect_to( root_url + editors[0].media[0].url + "/" + params[:id] )
       end
@@ -62,12 +62,12 @@ class MediaController < ApplicationController
   end
 
   def new
-    @action = "create"
     @_editor = Media.find( decode(params[:id]) ).data
-    @_mediatype = Media.find( @_editor.mtype )
-    mt = @_mediatype.title
+    mediatype = Media.find( @_editor.mtype )
+    mt = mediatype.title
     @_media = instance_variable_set( "@" + mt.downcase, Media.new(:title => "New " + mt.downcase, :info => "It's a new " + mt.downcase + "!", :url => "") )
-    init_obj(@_mediatype.title) unless Object.const_defined? @_mediatype.title #move to media model?
+    @_media.mediatype = mediatype
+    init_obj(mt) unless Object.const_defined? mt #move to media model?
     @_media.data = Object.const_get(mt).new
     render :inline => Media.find(3).data.script, :layout => "application"
   end
