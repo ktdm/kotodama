@@ -12,7 +12,6 @@ class Media < ActiveRecord::Base
   end
   belongs_to :data, :polymorphic => true
   belongs_to :mediatype, :class_name => "Media"
-  belongs_to :editor, :class_name => "Media"
 end
 
 class Mediatype < ActiveRecord::Base

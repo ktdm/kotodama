@@ -1,6 +1,6 @@
-<%- mediatype = (@_media ? (@_editor ? "editor" : @_media.mediatype.title.downcase) : "home") -%>
+<%- @_mediatype ||= "Home" -%>
 <!DOCTYPE html>
-<html lang="en-AU" mediatype="<%= mediatype %>">
+<html lang="en-AU" mediatype="<%= @_mediatype.downcase %>">
 <head>
 <title><%= @title %> | kotoda.ma</title>
 <%= stylesheet_link_tag :common, :media => "all" %>
@@ -17,7 +17,7 @@ function init() {
 </script>
 </head>
 <body onload="init()">
-<%- unless mediatype=="editor" -%>
+<%- unless @_mediatype=="Editor" -%>
 <%= render "home/login" %>
 <%= render "home/interface" %>
 <%- end -%>

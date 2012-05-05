@@ -3,7 +3,7 @@
  @title = "All " + tt.pluralize
  media = instance_variable_get("@" + tt.pluralize)
  mt = Media.where("title = ?", @mediatype.data_type)[0]
- e = Editor.where(:mtype => mt.id)[0].media
+ e = Editor.where(:mtype => @mediatype.id)[0].media[0]
 
  content_for :head do
 -%><script type="text/javascript">
@@ -18,7 +18,7 @@ end[0].html_safe %>}
 
  content_for :onload do
   -%> var i,views=document.getElementsByClassName("view");
- for (i=0;i<views.length;i++) views[i].onmousedown=viewlinks;<%-
+ for (i in views) views[i].onmousedown=viewlinks;<%-
  end -%>
 <table id="<%= tt %>_page" class="page">
  <tr>
@@ -30,7 +30,7 @@ end[0].html_safe %>}
     <tr>
      <td id="<%= tt %>_type_thumb" class="thumb" rowspan="3"><a href="example.html">Thumbnail</a></td>
      <td id="<%= tt %>_type_title" class="data">
-      <%= link_to "New " + tt, root_url %>
+      <%= link_to "New " + tt, root_url + e.url %>
       <%= link_to @mediatype.author, "userpage.html" %>
       <span><%= @mediatype.count.to_s + " instance" + (@mediatype.count==1 ? "" : "s") %></span>
      </td>
