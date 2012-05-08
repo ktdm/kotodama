@@ -17,21 +17,16 @@ module InitMedia
     end
 
     def self.alter(table, fields)
-      t = Object.const_get(table.to_s.capitalize.singularize)
-      t.new.attributes.reject {|x| x=="id"}.each do |field, type|
-#        conn.remove_column(table, field) unless (fields.has_key?(field) and (t.columns_hash[field].sql_type == fields[field]))
-        conn.remove_column(table, field) unless fields.has_key?(field)
+      o = Object.const_get(table.to_s.capitalize.singularize)
+      o.new.attributes.reject {|x| x=="id"}.each do |field, type|
+        conn.remove_column(table, field) unless (fields.has_key?(field) and (o.columns_hash[field].sql_type.to_s.downcase == fields[field].downcase))
       end
-      t.reset_column_information
+      o.reset_column_information
       fields.each do |field, type|
-        conn.add_column(table, field, type) unless t.new.respond_to? field.to_sym
+        conn.add_column(table, field, type) unless o.new.respond_to? field.to_sym
       end
 
-#change_table(table) do |t|
-  
-#end
-
-      t.reset_column_information
+      o.reset_column_information
       InitMedia.init_obj(table.to_s.capitalize.singularize)
     end
 

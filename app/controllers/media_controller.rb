@@ -46,7 +46,11 @@ class MediaController < ApplicationController
     end
     media.save
     media.data.save
-    T.alter(media.title.downcase.pluralize.to_sym, media.data.arguments[0]) if media.mediatype.title == "Mediatype"
+    if media.mediatype.title == "Mediatype"
+      basetype = {"Array" => "Text"}
+      args = media.data.arguments[0].inject ({}) {|x,y| x.merge({ y[0] => (basetype[y[1]] || y[1]) }) }
+      T.alter(media.title.downcase.pluralize.to_sym, args)
+    end
     redirect_to :back
   end
 
@@ -65,7 +69,7 @@ class MediaController < ApplicationController
     editor = Media.find(decode(params[:id]))
     media.mediatype_id = editor.data.mtype
     media.data = Object.const_get(media.mediatype.title).new(params[media.mediatype.title.downcase.to_sym])
-    if media.data_type == "Mediatype" # move to mediatype editor?
+    if media.data_type == "Mediatype" # move to mediatype model
       basetype = {"Array" => "Text"}
       args = media.data.arguments[0].map {|x| [ x[0], basetype[x[1]] || x[1] ] }
       T.create( media.title.downcase.pluralize.to_sym, args )
