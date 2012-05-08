@@ -4,7 +4,7 @@ Rubydama01::Application.routes.draw do
 
   resources :media,
             :path => '',
-            :only => [:show, :edit, :update], #no :new, :create
+            :only => [:show, :edit, :update],
             :constraints => { :id => /[a-zA-Z0-9_\-]+/ } do
     get :talk, :on => :member
     post :create, :on => :member

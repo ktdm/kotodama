@@ -1,8 +1,7 @@
 <%-
  mt = @_media.mediatype.title.downcase
- media = instance_variable_get("@" + mt)
- @title = "Edit " + ((media.url!="")?mt + " '" + media.title + "'":"new " + mt)
- @_editor.forms << {"Render"=>"<iframe id=\"render\" class=\"editor_window\"></iframe>"}
+ @title = "Edit " + ((@_media.url!="")?mt + " '" + @_media.title + "'":"new " + mt)
+ @_editor.data.forms << {"Render"=>"<iframe id=\"render\" class=\"editor_window\"></iframe>"}
 -%>
 <% content_for :head do %>
 <script type="text/javascript">
@@ -15,12 +14,12 @@ function toggle_frames(it) {
  return eddisp.frames[i];
 }
 var eddisp={
- frames:<%= @_editor.forms.map {|x| x.keys[0].downcase + "_frame" }.to_s.html_safe %>,
- display:<%= @_editor.forms.map {|x| "block" }.to_s.html_safe %>,
- menu:<%= @_editor.forms.map {|x| x.keys[0] }.to_s.html_safe %>
+ frames:<%= @_editor.data.forms.map {|x| x.keys[0].downcase + "_frame" }.to_s.html_safe %>,
+ display:<%= @_editor.data.forms.map {|x| "block" }.to_s.html_safe %>,
+ menu:<%= @_editor.data.forms.map {|x| x.keys[0] }.to_s.html_safe %>
 }
 </script>
-<%= render :inline => @_editor.script %>
+<%= render :inline => @_editor.data.script %>
 <style type="text/css">
 #menu_bar {
  float:right
@@ -57,12 +56,12 @@ form>div {
  end
 -%>
 <%= render "home/login" %>
-<%= form_for media, :url => {:action => (media.url ? "update" : "create")}, :html => {:class => "page"} do |p|%>
+<%= form_for @_media, :url => {:action => (@_media.url ? "update" : "create")}, :html => {:class => "page"} do |p|%>
 <div><%= render "home/interface" %></div>
  <div>
   <div id="editor_actions" class="top">
    <span class="section_title"
-    ><%= link_to mt.capitalize, root_url + @_media.mediatype.url %>: <%= link_to media.title, root_url + media.url, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= p.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
+    ><%= link_to mt.capitalize, root_url + @_media.mediatype.url %>: <%= link_to @_media.title, root_url + @_media.url, :id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><%= p.text_field :title, :class=>"hide", :onkeypress=>"if (event.which===13) stringedit(this,false)", :onblur=>"if (this.style.display!=='none') stringedit(this,false)" %>
    </span>
    <span class="section_info">
     <span onclick="textedit(this,true)">Info</span
@@ -71,8 +70,8 @@ form>div {
    </span>
    <div id="menu_bar" class="actions">
     <a href="#" onclick="document.forms[1].submit()">Save</a>
-    <%= link_to "New", root_url + @_editor.media[0].url %>
-    <%- @_editor.forms.each do |f| -%><a href="#" onclick="toggle_frames(this.firstChild.data)"><%= f.keys[0] %></a><%- end -%>
+    <%= link_to "New", root_url + @_editor.url %>
+    <%- @_editor.data.forms.each do |f| -%><a href="#" onclick="toggle_frames(this.firstChild.data)"><%= f.keys[0] %></a><%- end -%>
    </div>
 <%- @_media.mediatype.data.arguments.select {|x| x.values[0] == "Array" }.each do |f| -%>
    <div id="<%= f.keys[0].downcase.singularize %>_operations" class="actions">
@@ -84,8 +83,8 @@ form>div {
   </div>
  </div>
  <div>
-  <div id="canvas" class="bottom"><%= fields_for media.data do |data| %>
-   <%= render :partial => "home/frame", :collection => @_editor.forms, :locals => {:data => data} %>
+  <div id="canvas" class="bottom"><%= fields_for @_media.data do |data| %>
+   <%= render :partial => "home/frame", :collection => @_editor.data.forms, :locals => {:data => data} %>
   <%- end -%></div>
  </div>
 <%- end -%>

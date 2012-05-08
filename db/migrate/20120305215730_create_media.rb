@@ -9,7 +9,6 @@ class CreateMedia < ActiveRecord::Migration
 
       t.references :data, :polymorphic => true
       t.integer :mediatype_id
-      t.integer :editor_id
 
       t.timestamps
     end
