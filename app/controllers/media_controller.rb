@@ -31,6 +31,7 @@ class MediaController < ApplicationController
           @_media.data.send(w.keys[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w.values[0]=="Array"
         end
         instance_variable_set( "@" + @_media.data_type.downcase, @_media )
+        init_obj("Editor") unless Object.const_defined? "Editor"
         render :inline => Media.find(3).data.script, :layout => "application"
       else
         redirect_to( root_url + editors[0].media[0].url + "/" + params[:id] )
@@ -40,17 +41,13 @@ class MediaController < ApplicationController
 
   def update
     media = Media.update( decode(params[:id]), params[:media] )
+    init_obj(media.data_type) unless Object.const_defined? media.data_type #
     media.data = Object.const_get(media.data_type).update(media.data_id, params[media.data_type.downcase.to_sym])
     media.mediatype.data.arguments.each do |w|
-      media.data.send(w.keys[0]).map! {|x| x.inject({}) {|y,z| y.merge({z[0]=>z[1]}) } } if w.values[0]=="Array"
+      media.data.send(w.keys[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w.values[0]=="Array"
     end
     media.save
     media.data.save
-    if media.mediatype.title == "Mediatype"
-      basetype = {"Array" => "Text"}
-      args = media.data.arguments[0].inject ({}) {|x,y| x.merge({ y[0] => (basetype[y[1]] || y[1]) }) }
-      T.alter(media.title.downcase.pluralize.to_sym, args)
-    end
     redirect_to :back
   end
 
@@ -68,12 +65,8 @@ class MediaController < ApplicationController
     media = Media.new(params[:media])
     editor = Media.find(decode(params[:id]))
     media.mediatype_id = editor.data.mtype
+    init_obj(media.mediatype.title) unless Object.const_defined? media.mediatype.title #
     media.data = Object.const_get(media.mediatype.title).new(params[media.mediatype.title.downcase.to_sym])
-    if media.data_type == "Mediatype" # move to mediatype model
-      basetype = {"Array" => "Text"}
-      args = media.data.arguments[0].map {|x| [ x[0], basetype[x[1]] || x[1] ] }
-      T.create( media.title.downcase.pluralize.to_sym, args )
-    end
     media.mediatype.count += 1
     media.mediatype.save
     editor.count += 1
@@ -81,6 +74,7 @@ class MediaController < ApplicationController
     media.mediatype.data.arguments.each do |w|
       media.data.send(w.keys[0]).map! {|x| x.inject({}) {|y,z| y.merge({z[0]=>z[1]}) } } if w.values[0]=="Array"
     end
+    media.data.media[0]=media
     media.save
     media.data.save
     init_obj(media.title) if media.data_type=="Mediatype"
