@@ -12,6 +12,7 @@ class MediaController < ApplicationController
       new if (@_mediatype = media.data_type) == "Editor"
       init_obj(@_mediatype) unless Object.const_defined? @_mediatype
       render :inline => media.mediatype.data.script, :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false ) #media.author = kotoda.ma?
+#      render :inline => media.mediatype.data.contexts["page"], :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false )
     else
       @_media = Media.find ( decode params[:context] )
       (@_mediatype = @_media.data_type) == "Editor" ? edit : redirect_to( root_url + Editor.where(:mtype => mediatype.title)[0].media[0].url + "/" + params[:id] ) #404?
@@ -27,25 +28,20 @@ class MediaController < ApplicationController
     else
       @_editor = Media.find(decode(params[:context]))
       if @_editor.data.mtype == @_media.mediatype.id
-        @_media.mediatype.data.arguments.each do |w| # generalise for argument types, *move to models*
-          @_media.data.send(w.keys[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w.values[0]=="Array"
-        end
         instance_variable_set( "@" + @_media.data_type.downcase, @_media )
         init_obj("Editor") unless Object.const_defined? "Editor"
         render :inline => Media.find(3).data.script, :layout => "application"
+#        render :inline => Media.find(3).data.contexts["page"], :layout => "application"
       else
-        redirect_to( root_url + editors[0].media[0].url + "/" + params[:id] )
+        redirect_to( root_url + editors[0].media[0].url + "/" + params[:id] ) #preferences?
       end
     end
   end
 
   def update
     media = Media.update( decode(params[:id]), params[:media] )
-    init_obj(media.data_type) unless Object.const_defined? media.data_type #
+    init_obj(media.data_type) unless Object.const_defined? media.data_type
     media.data = Object.const_get(media.data_type).update(media.data_id, params[media.data_type.downcase.to_sym])
-    media.mediatype.data.arguments.each do |w|
-      media.data.send(w.keys[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w.values[0]=="Array"
-    end
     media.save
     media.data.save
     redirect_to :back
@@ -57,7 +53,7 @@ class MediaController < ApplicationController
     mt = mediatype.title
     @_media = instance_variable_set( "@" + mt.downcase, Media.new(:title => "New " + mt.downcase, :info => "It's a new " + mt.downcase + "!", :url => "") )
     @_media.mediatype = mediatype
-    init_obj(mt) unless Object.const_defined? mt #move to media model?
+    init_obj(mt) unless Object.const_defined? mt
     @_media.data = Object.const_get(mt).new
   end
 
@@ -65,19 +61,13 @@ class MediaController < ApplicationController
     media = Media.new(params[:media])
     editor = Media.find(decode(params[:id]))
     media.mediatype_id = editor.data.mtype
-    init_obj(media.mediatype.title) unless Object.const_defined? media.mediatype.title #
+    init_obj(media.mediatype.title) unless Object.const_defined? media.mediatype.title
     media.data = Object.const_get(media.mediatype.title).new(params[media.mediatype.title.downcase.to_sym])
-    media.mediatype.count += 1
-    media.mediatype.save
     editor.count += 1
     editor.save
-    media.mediatype.data.arguments.each do |w|
-      media.data.send(w.keys[0]).map! {|x| x.inject({}) {|y,z| y.merge({z[0]=>z[1]}) } } if w.values[0]=="Array"
-    end
-    media.data.media[0]=media
+    media.data.media[0] = media
     media.save
     media.data.save
-    init_obj(media.title) if media.data_type=="Mediatype"
     if media.data_type == "Editor" #delete when templates are called from database
       path = Rails.root.join("app/views/media", media.url)
       Dir.mkdir(path) unless File.exists?(path)

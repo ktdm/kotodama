@@ -1,6 +1,6 @@
 <%-
  mt = @_media.mediatype.title.downcase
- @title = "Edit " + ((@_media.url!="")?mt + " '" + @_media.title + "'":"new " + mt)
+ @_title = "Edit " + ((@_media.url!="")?mt + " '" + @_media.title + "'":"new " + mt)
  @_editor.data.forms << {"Render"=>"<iframe id=\"render\" class=\"editor_window\"></iframe>"}
 -%>
 <% content_for :head do %>
@@ -45,6 +45,16 @@ form>div {
 .interface,.top,.bottom {
  display:table-cell;
  padding:5px
+}
+.editor_window {
+ width:100%;
+ height:100%;
+ box-sizing: border-box;
+ -webkit-box-sizing:border-box;
+ -moz-box-sizing: border-box;
+ -ms-box-sizing: border-box;
+ border:1px solid black;
+ font-size:medium
 }
 </style><%-
  end

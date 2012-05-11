@@ -1,37 +1,40 @@
 class Media < ActiveRecord::Base
   include Url
-
+  belongs_to :data, :polymorphic => true
+  belongs_to :mediatype, :class_name => "Media"
   validates :title,
    :presence => true,
    :length => {:minimum => 1}
   before_create do |media|
-    media.title.capitalize!
+    media.title.capitalize! if media.data_type == "Mediatype"
   end
   after_create do |media|
     media.url = encode media.id
     media.save
+    media.mediatype.count += 1
+    media.mediatype.save
   end
-  belongs_to :data, :polymorphic => true
-  belongs_to :mediatype, :class_name => "Media"
+  before_save do |media|
+    media.mediatype.data.arguments.each do |w|
+      media.data.send(w.keys[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w.values[0].downcase=="array"
+    end
+  end
 end
 
 class Mediatype < ActiveRecord::Base
   include InitMedia
-
   has_many :media, :as => :data, :dependent => :destroy #has_one
   serialize :arguments, Array
-  after_update do |mediatype|
+  after_create "save_table('create')"
+  after_update "save_table('alter')"
+  protected
+  def save_table(action) #separate
+    init_obj(media[0].title) unless Object.const_defined? media[0].title
     basetype = {"Array" => "Text"}
-    T.alter(
-      mediatype.media[0].title.downcase.pluralize.to_sym,
-      mediatype.arguments.map {|x| x.map {|y| { y[0] => (basetype[y[1]] || y[1]) } } }.flatten.inject({}) {|x,y| x.merge(y) }
-    )
-  end
-  after_create do |mediatype|
-    basetype = {"Array" => "Text"}
-    T.create(
-      mediatype.media[0].title.downcase.pluralize.to_sym,
-      mediatype.arguments.map {|x| x.map {|y| { y[0] => (basetype[y[1]] || y[1]) } } }.flatten.inject({}) {|x,y| x.merge(y) }
+    T.send(
+      action,
+      media[0].title.downcase.pluralize.to_sym,
+      arguments.map {|x| x.map {|y| { y[0] => (basetype[y[1]] || y[1]) } } }.flatten.inject({}) {|x,y| x.merge(y) }
     )
   end
 end

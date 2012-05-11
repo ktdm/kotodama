@@ -1,6 +1,6 @@
 <%-
  tt = @mediatype.title.downcase
- @title = "All " + tt.pluralize
+ @_title = "All " + tt.pluralize
  media = Media.where(:data_type => tt.capitalize)
  mt = Media.where("title = ?", @mediatype.data_type)[0]
  e = Editor.where(:mtype => @mediatype.id)[0].media[0]

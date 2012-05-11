@@ -14,12 +14,13 @@ module InitMedia
       fields.each do |field, type|
         conn.add_column(table, field, type)
       end
+      InitMedia.init_obj(table.to_s.capitalize.singularize)
     end
 
     def self.alter(table, fields)
       o = Object.const_get(table.to_s.capitalize.singularize)
       o.new.attributes.reject {|x| x=="id"}.each do |field, type|
-        conn.remove_column(table, field) unless (fields.has_key? field and o.columns_hash[field].sql_type.to_s.downcase == fields[field].downcase)
+        conn.remove_column(table, field) unless (fields.has_key? field and o.columns_hash[field].sql_type.to_s.downcase == fields[field].downcase) #same mediatype => just rename column
       end
       o.reset_column_information
       fields.each do |field, type|
