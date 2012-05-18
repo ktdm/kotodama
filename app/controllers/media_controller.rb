@@ -12,7 +12,7 @@ class MediaController < ApplicationController
       new if (@_mediatype = media.data_type) == "Editor"
       init_obj(@_mediatype) unless Object.const_defined? @_mediatype
       render :inline => media.mediatype.data.script, :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false ) #media.author = kotoda.ma?
-#      render :inline => media.mediatype.data.contexts["page"], :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false )
+#      render :inline => media.mediatype.data.views["mediatype.html.erb"], :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false )
     else
       @_media = Media.find ( decode params[:context] )
       (@_mediatype = @_media.data_type) == "Editor" ? edit : redirect_to( root_url + Editor.where(:mtype => mediatype.title)[0].media[0].url + "/" + params[:id] ) #404?
@@ -31,7 +31,7 @@ class MediaController < ApplicationController
         instance_variable_set( "@" + @_media.data_type.downcase, @_media )
         init_obj("Editor") unless Object.const_defined? "Editor"
         render :inline => Media.find(3).data.script, :layout => "application"
-#        render :inline => Media.find(3).data.contexts["page"], :layout => "application"
+#        render :inline => Media.find(3).data.views["editor.html.erb"], :layout => "application"
       else
         redirect_to( root_url + editors[0].media[0].url + "/" + params[:id] ) #preferences?
       end

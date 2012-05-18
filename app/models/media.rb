@@ -10,13 +10,13 @@ class Media < ActiveRecord::Base
   end
   after_create do |media|
     media.url = encode media.id
-    media.save
     media.mediatype.count += 1
+    media.save
     media.mediatype.save
   end
   before_save do |media|
     media.mediatype.data.arguments.each do |w|
-      media.data.send(w.keys[0]).map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w.values[0].downcase=="array"
+      media.data.send(w.keys[0]).delete_if {|x| x.empty? }.map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w.values[0].downcase=="array"
     end
   end
 end
@@ -25,6 +25,7 @@ class Mediatype < ActiveRecord::Base
   include InitMedia
   has_many :media, :as => :data, :dependent => :destroy #has_one
   serialize :arguments, Array
+  serialize :views, Array
   after_create "save_table('create')"
   after_update "save_table('alter')"
   protected
