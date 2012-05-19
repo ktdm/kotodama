@@ -3,12 +3,9 @@
  view_counter||=0
  n=(view_counter+1).to_s
  unless view=={}
-  -%><li><%-
+  -%><li class="fill"><%-
  end
--%><div id="<%= (view=={})?"view_stamp":("view_"+n) %>">
-  <div class="navlist"><%= link_to view.keys[0], "#",:id => "title", :onmousedown => "if (event.which===1) stringedit(this,true);return false" %><input class="hide" onkeypress="if (event.which===13) {stringedit(this,false);this.parentNode.parentNode.childNodes[3].name='mediatype[views][]['+this.previousSibling.firstChild.data+']'}" onblur="if (this.style.display!=='none') {stringedit(this,false);this.parentNode.parentNode.childNodes[3].name='mediatype[views][]['+this.previousSibling.firstChild.data+']'}"<%= (view=={})?"":" id='view_title_" + n + "'" %> /></div>
-  <textarea class="editor_window"<%= (view=={})?"":" name='mediatype[views][]["+view.keys[0]+"]' id='view_code_" + n + "'"%>><%= view.values[0] %></textarea>
-</div><%-
+-%><textarea class='editor_window' id='<%= (view=={})?"view_stamp":"view_" + n + "' name='mediatype[views][]["+view.keys[0]+"]" %>'><%= view.values[0] %></textarea><%-
  unless view=={}
   -%></li><%-
  end

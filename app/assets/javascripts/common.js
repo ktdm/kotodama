@@ -127,7 +127,7 @@ function ins() {
   x.style.display="block";
  }
  else {
-  if (i=$("ins_item")) i.parentNode.removeChild($("ins_item"));
+  if (i=$("ins_item")) i.parentNode.removeChild(i);
   if (typeof(list.insname=arguments[0])==="string") {
    if (z=list.actions.last) {//what if no last.nextSibling?
     list.target=$(l).insertBefore(document.createElement("li"),z.nextSibling)

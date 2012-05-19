@@ -35,7 +35,7 @@ class Mediatype < ActiveRecord::Base
     T.send(
       action,
       media[0].title.downcase.pluralize.to_sym,
-      arguments.map {|x| x.map {|y| { y[0] => (basetype[y[1]] || y[1]) } } }.flatten.inject({}) {|x,y| x.merge(y) }
+      arguments.delete_if {|x| x.empty? }.map {|x| x.map {|y| { y[0] => (basetype[y[1]] || y[1]) } } }.flatten.inject({}) {|x,y| x.merge(y) }
     )
   end
 end
