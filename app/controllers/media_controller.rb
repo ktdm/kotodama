@@ -5,16 +5,19 @@ class MediaController < ApplicationController
   include Url
   include InitMedia
 
+  def url
+    params[:context].to_s + "/" + params[:id].to_s #what's this really?
+  end
+
   def show
     if params[:id].nil?
-      render :file => "home/index"
+      render "home/index"
     elsif params[:context].nil?
       media = Media.find( decode params[:id] )
       instance_variable_set( "@" + media.data_type.downcase, media )
       new if (@_mediatype = media.data_type) == "Editor"
       init_obj(@_mediatype) unless Object.const_defined? @_mediatype
-      #render :inline => media.mediatype.data.views[0][@_mediatype], :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false )
-render params[:id], :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false )
+      render url, :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false )
     else
       @_media = Media.find ( decode params[:context] )
       (@_mediatype = @_media.data_type) == "Editor" ? edit : redirect_to( root_url + Editor.where(:mtype => mediatype.title)[0].media[0].url + "/" + params[:id] ) #404?
@@ -32,8 +35,7 @@ render params[:id], :layout => ( (["Mediatype", "Editor"].include? @_mediatype) 
       if @_editor.data.mtype == @_media.mediatype.id
         instance_variable_set( "@" + @_media.data_type.downcase, @_media )
         init_obj("Editor") unless Object.const_defined? "Editor"
-        #render :inline => Media.find(3).data.views[0]["Editor"], :layout => "application"
-render params[:context], :layout => "application"
+        render url, :layout => "application"
       else
         redirect_to( root_url + editors[0].media[0].url + "/" + params[:id] ) #preferences?
       end
