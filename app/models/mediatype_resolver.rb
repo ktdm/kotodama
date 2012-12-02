@@ -6,12 +6,15 @@ class MediatypeResolver < ActionView::PathResolver
   include Url
 
   def find_templates(name, prefix, partial, details)
+puts "path: " + prefix + " -:- " + name
     mediatype, name = name.index(":").nil? ? ["", name] : name.split(":")
-    path = Path.build(name, prefix, mediatype.downcase == "partial")
+    path = Path.build(name, prefix, partial || mediatype.downcase == "partial")
+    details[:formats] = [mediatype.to_sym] unless mediatype.empty?
     query(path, details, details[:formats])
   end
 
   def query(path, details, formats)
+#puts "path:" + path.prefix + "-:-" + path.name
     mediatype = Media.find(decode (path.prefix.empty? ? path.name : path.prefix)).mediatype
     mediatype.data.views.reject {|x| formats.index(x.keys[0].downcase.to_sym).nil? }.map { |hash|
       ActionView::Template.new(hash.values[0], path, ActionView::Template::Handlers::ERB,
