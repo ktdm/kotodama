@@ -35,7 +35,10 @@ module InitMedia
   def init_obj(title)
     Object.send(:remove_const, title) if Object.const_defined?(title)
     Object.const_set( title, Class.new(ActiveRecord::Base) {
-      establish_connection(:development)
+      Rails.env.production? ?
+#        establish_connection( :adapter => "postgresql" , :database => "DATABASE" ) :
+        establish_connection( :production ) :
+        establish_connection( :development )
       has_many :media, :as => :data
     } )
     Media.where(:title => title, :data_type => "Mediatype")[0].data.arguments.each do |x|
