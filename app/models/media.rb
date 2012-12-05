@@ -43,4 +43,5 @@ end
 class Editor < ActiveRecord::Base
   has_many :media, :as => :data, :dependent => :destroy #has_one
   serialize :forms, Array
+  serialize :views, Array
 end

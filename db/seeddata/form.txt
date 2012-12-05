@@ -3,9 +3,9 @@
  form_counter||=0
  n=(form_counter+1).to_s
  unless form=={}
-  -%><li class="fill"><%-
+  -%><li><%-
  end
--%><div id="<%= (form=={})?"form_stamp":("form_"+n) %>" class="fill">
+-%><div id="<%= (form=={})?"form_stamp":("form_"+n) %>">
  <div class="navlist">
   <div><%= form.keys[0] %></div>
   <ul class="hr">
