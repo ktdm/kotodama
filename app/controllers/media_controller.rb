@@ -17,7 +17,7 @@ class MediaController < ApplicationController
       instance_variable_set( "@" + media.data_type.downcase, media )
       new if (@_mediatype = media.data_type) == "Editor"
       init_obj(@_mediatype) unless Object.const_defined? @_mediatype
-#render :inline => url
+#render :inline => @_mediatype
       render url, :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false )
     else
       @_media = Media.find ( decode params[:context] )

@@ -17,10 +17,6 @@ function init() {
 </script>
 </head>
 <body onload="init()">
-<%- unless @_mediatype=="Editor" -%>
-<%= render "home/login" %>
-<%= render "home/interface" %>
-<%- end -%>
 <%= yield %>
 </body>
 </html>
