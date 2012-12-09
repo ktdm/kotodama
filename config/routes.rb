@@ -1,6 +1,6 @@
 Rubydama01::Application.routes.draw do
 
-  root :to => 'media#show'
+  root :to => "media#show"
 
   #get "run" => 'media#run'
 

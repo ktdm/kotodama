@@ -5,23 +5,22 @@ class MediaController < ApplicationController
   include Url
   include InitMedia
 
-  def url
-    params[:context].to_s + "/" + params[:id].to_s #what's this really?
-  end
-
   def show
-    if params[:id].nil?
-      render "home/index"
-    elsif params[:context].nil?
+    params[:id] = "i" if params[:id].nil? #Frontpage.find(1).media[0].url
+    request.fullpath[1] = "i" if request.fullpath == "/"
+    if params[:context].nil?
       media = Media.find( decode params[:id] )
       instance_variable_set( "@" + media.data_type.downcase, media )
       new if (@_mediatype = media.data_type) == "Editor"
       init_obj(@_mediatype) unless Object.const_defined? @_mediatype
-#render :inline => @_mediatype
-      render url, :layout => ( (["Mediatype", "Editor"].include? @_mediatype) ? "application" : false )
+      render request.fullpath, :layout => ( (["Mediatype", "Editor", "Frontpage"].include? @_mediatype and ["html", nil].include? params[:format]) ? "application" : false ) #layouts... as mediatype?? (Eg "layout:g" where u the Home mediatype url)
     else
       @_media = Media.find ( decode params[:context] )
-      (@_mediatype = @_media.data_type) == "Editor" ? edit : redirect_to( root_url + Editor.where(:mtype => mediatype.title)[0].media[0].url + "/" + params[:id] ) #404?
+      if request.fullpath.index(".").nil?
+        (@_mediatype = @_media.data_type) == "Editor" ? edit : redirect_to( root_url + Editor.where(:mtype => mediatype.title)[0].media[0].url + "/" + params[:id] ) #404?
+      else
+        render request.fullpath[1..-1], :layout => false
+      end
     end
   end
 
@@ -36,7 +35,8 @@ class MediaController < ApplicationController
       if @_editor.data.mtype == @_media.mediatype.id
         instance_variable_set( "@" + @_media.data_type.downcase, @_media )
         init_obj("Editor") unless Object.const_defined? "Editor"
-        render url, :layout => "application"
+#render url, :layout => "application"
+        render request.fullpath[1..-1], :layout => "application"
       else
         redirect_to( root_url + editors[0].media[0].url + "/" + params[:id] ) #preferences?
       end
@@ -49,7 +49,7 @@ class MediaController < ApplicationController
     media.data = Object.const_get(media.data_type).update(media.data_id, params[media.data_type.downcase.to_sym])
     media.save
     media.data.save
-    redirect_to :back
+    redirect_to :back #causing chrome issue on update javascript
   end
 
   def new #add :mediatype/new route later
@@ -73,10 +73,6 @@ class MediaController < ApplicationController
     media.data.media[0] = media
     media.save
     media.data.save
-    if media.data_type == "Editor" #delete when templates are called from database
-      path = Rails.root.join("app/views/media", media.url)
-      Dir.mkdir(path) unless File.exists?(path)
-    end
     redirect_to media_url + "/" + media.url
   end
 
