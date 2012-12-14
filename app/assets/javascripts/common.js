@@ -118,7 +118,9 @@ function ins() {
  if (typeof(arguments[0])!=="string"&&!$("ins_item")) {
   list=lists[l];
   list.actions=new List(l);
-  x=$(l).appendChild($("ins_stamp").cloneNode(true));
+  if (list.insloc) {a = list.insloc()}
+  else {a = $(l)};
+  x=a.appendChild(a.nextSibling.cloneNode(true));
   x.id="ins_item";
   (inp=x.childNodes[1]).id="ins_input";
   inp.value=lists[l].actions.typelabel;

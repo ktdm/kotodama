@@ -49,7 +49,7 @@ class MediaController < ApplicationController
     media.data = Object.const_get(media.data_type).update(media.data_id, params[media.data_type.downcase.to_sym])
     media.save
     media.data.save
-    redirect_to :back #causing chrome issue on update javascript
+    redirect_to :back #request.fullpath + "/edit" #use calling url instead?
   end
 
   def new #add :mediatype/new route later
