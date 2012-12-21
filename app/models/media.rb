@@ -19,6 +19,9 @@ class Media < ActiveRecord::Base
       media.data.send(w.keys[0]).delete_if {|x| x.empty? }.map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w.values[0].downcase=="array"
     end
   end
+  after_save do |media|
+    media.data.save
+  end
 end
 
 class Mediatype < ActiveRecord::Base

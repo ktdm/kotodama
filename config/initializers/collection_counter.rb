@@ -15,3 +15,23 @@ module ActionView
     end
   end
 end
+
+class InspectableMemoryStore < ActiveSupport::Cache::FileStore
+  def write *args
+    super
+
+    @inspectable_keys[ args[0] ] = true
+  end
+
+  def delete *args
+    super
+
+    @inspectable_keys.delete args[0]
+  end
+
+  def keys
+    @inspectable_keys.keys
+  end
+end
+
+ActionController::Base.cache_store = InspectableMemoryStore.new nil

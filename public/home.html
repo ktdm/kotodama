@@ -3,7 +3,7 @@
  <head>
   <title>Home | kotoda.ma</title>
   <script type="text/javascript">
-if (!document.cookie) window.location="/"
+if (!document.cookie||document.cookie.indexOf("login")==-1) window.location="/"
 var shown="feed_sitenews";
 var lists={
  actions_list: {

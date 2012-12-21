@@ -1,6 +1,9 @@
 function $(id) {
  return document.getElementById(id)
 }
+function $$(className) {
+ return document.getElementsByClassName(className)
+}
 function innerFunc(fun) {
  j=fun.toString();
  return j.slice(j.indexOf("{")+1,-1);
@@ -118,8 +121,7 @@ function ins() {
  if (typeof(arguments[0])!=="string"&&!$("ins_item")) {
   list=lists[l];
   list.actions=new List(l);
-  if (list.insloc) {a = list.insloc()}
-  else {a = $(l)};
+  a=(list.insloc ? list.insloc() : $(l));
   x=a.appendChild(a.nextSibling.cloneNode(true));
   x.id="ins_item";
   (inp=x.childNodes[1]).id="ins_input";
@@ -161,6 +163,7 @@ function del(a) {
  }
 }
 function getTarget(n) {
+ if (targetElement) return targetElement();
  var l,o;
  while (!((l=n.id) in lists)) {
   for (var n=n.parentNode,o=0;o<n.childNodes.length;o++) {
@@ -189,10 +192,11 @@ function menu(a) {
  window.onmouseup=function(e) {
   f(e);
   f=null;
-  for (i in (c=(b=$("here").parentNode).childNodes)) if (c[i].firstChild) break;//lucky...
+  for (i in (c=(b=$("here").parentNode).childNodes)) if (c[i].firstChild) break;//TODO: use a.list
   while (b.lastChild!=c[i]) b.removeChild(b.lastChild);
   this.onmouseup=null
  };
+ if ("onmenu" in a) a.onmenu();
  if ("timer" in a) setTimeout(a.timer,1000)
 }
 
@@ -200,7 +204,7 @@ function render_login() {
  $("login_help").style.display=$("login_form").style.display="";
  $("reg_form").style.display=$("register").style.display="";
  $("login_box").style.marginLeft="-101px"
- if (document.cookie) {
+ if (document.cookie&&document.cookie.indexOf("login")!=-1) {
   $("login").style.display="none";
   $("logout").style.display="block";
   $("logo").parentNode.href="home.html"
@@ -214,13 +218,13 @@ function render_login() {
 
 var loginObj={username:"",password:"",email:""};
 function login_box(e) {
- if (e&&!document.cookie) {$("register").style.display="block"}
+ if (e&&(!document.cookie||document.cookie.indexOf("login")==-1)) {$("register").style.display="block"}
  else $("register").style.display=""
 }
 function login(e) {
  if (loginObj.username&&loginObj.password) { //Login fields ok
   if (e||loginObj.email) { //Login or register
-   document.cookie="login";
+   document.cookie="login;";
    render_login();
    window.location=location.href;
    return true
@@ -248,7 +252,8 @@ function login(e) {
  }
 }
 function logout() {
- document.cookie="login; max-age=0";
+ document.cookie=null; //.replace(/(; )?login=login(; )?/,"");
+//alert(document.cookie);
  render_login();
  window.location=location.href
 }
