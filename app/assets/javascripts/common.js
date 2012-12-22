@@ -133,10 +133,7 @@ function ins() {
  else {
   if (i=$("ins_item")) i.parentNode.removeChild(i);
   if (typeof(list.insname=arguments[0])==="string") {
-   if (z=list.actions.last) {//what if no last.nextSibling?
-    list.target=$(l).insertBefore(document.createElement("li"),z.nextSibling)
-   }
-   else list.target=$(l).appendChild(document.createElement("li"));
+   list.target=$(l).appendChild(document.createElement("li"));
    if (list.insfunc) list.insfunc();
    if (list.finalfunc) list.finalfunc(list.actions.nextindex)
   }
@@ -163,7 +160,6 @@ function del(a) {
  }
 }
 function getTarget(n) {
- if (targetElement) return targetElement();
  var l,o;
  while (!((l=n.id) in lists)) {
   for (var n=n.parentNode,o=0;o<n.childNodes.length;o++) {
@@ -188,10 +184,10 @@ function menu(a) {
    link.onmouseup=a.list[i]
   }
  }
- f=("disarm" in a)?a.disarm:function() {return false};
+ disarmMenu=("disarm" in a)?a.disarm:function() {return false};
  window.onmouseup=function(e) {
-  f(e);
-  f=null;
+  disarmMenu(e);
+  disarmMenu=null;
   for (i in (c=(b=$("here").parentNode).childNodes)) if (c[i].firstChild) break;//TODO: use a.list
   while (b.lastChild!=c[i]) b.removeChild(b.lastChild);
   this.onmouseup=null
