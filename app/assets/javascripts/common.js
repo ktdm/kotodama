@@ -4,13 +4,16 @@ function $(id) {
 function $$(className) {
  return document.getElementsByClassName(className)
 }
+function _(context, path) {
+ return document.evaluate(path, context, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; //ahh IE...
+}
 function innerFunc(fun) {
- j=fun.toString();
+ var j=fun.toString();
  return j.slice(j.indexOf("{")+1,-1);
 }
 
 function nofollow() {
- var elems=document.getElementsByTagName('a'),i,j="";
+ var elems=document.getElementsByTagName('a'), i, j="", o;
  for (i in elems) {
   if (elems[i].href===location.href+"#") {
    if ((o=elems[i]).onclick) {j=innerFunc(o.onclick)}
@@ -28,12 +31,14 @@ function viewlinks() { //goes with summary
   it: this,
   list: editor[type], //TODO append to each record value "/"+this.childNodes[1].href after the slash
   disarm: function() {
-   if ((t=(b=$("here").parentNode).firstChild).innerHTML==="All editors") {
+    var t, b;
+    if ((t=(b=$("here").parentNode).firstChild).innerHTML==="All editors") {
     b.removeChild(t);
     b.childNodes[1].style.display="block"
    }
   },
   timer: function(){
+   var t, ae;
    (t=$("here").parentNode).childNodes[1].style.display="none";
    ae=t.insertBefore(document.createElement("a"),t.firstChild);
    ae.href="/c";
@@ -61,8 +66,7 @@ function inputBlur(id,text) {
 }
 
 function toggle() {//please kill me
- ar=arguments;
- a=$(ar[0]).style.display;
+ var ar=arguments, a=$(ar[0]).style.display, r;
  if (a==="none") a=false;
  r=["",""];
  switch (ar.length) {
@@ -75,6 +79,7 @@ function toggle() {//please kill me
 }
 
 function stringedit(it,start) {
+ var i;
  if (start) {
   (i=it.nextSibling).value=it.firstChild.data;
   window.onmouseup=function(){
@@ -88,17 +93,17 @@ function stringedit(it,start) {
  it.style.display="none"
 }
 function textedit(it,start) {
- i=start?it.nextSibling:it.previousSibling
+ var i=start?it.nextSibling:it.previousSibling, j;
  i.style.display="inline";
- it.style.display="none"
+ it.style.display="none";
  if (start) {
   (j=i.lastChild).focus();
-  j.selectionStart=j.value.length;
+  j.selectionStart=j.value.length
  }
 }
 
 function List(base) {
- var i,j=$(base).childNodes,k=-1;
+ var i, j=$(base).childNodes, k=-1;
  for (i=0;i<j.length;i++) {
   if (j[i].childNodes.length) {
    k++;
@@ -113,18 +118,18 @@ function List(base) {
  this.length=k+1;
  this.type=$(base).getAttribute("mediatype");//move these two to lists
  this.typelabel=(function(n){return n.charAt(0).toUpperCase()+n.slice(1)})(this.type);
- this.nextindex=(this.last)?1+parseFloat((c=this.last.firstChild.id).slice(c.indexOf("_")+1)):1;//unsafe firstChild must not be a text node
+// this.nextindex=(this.last)?1+parseFloat((c=this.last.firstChild.id).slice(c.indexOf("_")+1)):1;//unsafe firstChild must not be a text node
 }
 
 function ins() {
- var x,i,z,n,c,l=getTarget(this);
+ var x, i, z, n, c, l=getTarget(this), a;
  if (typeof(arguments[0])!=="string"&&!$("ins_item")) {
   list=lists[l];
   list.actions=new List(l);
   a=(list.insloc ? list.insloc() : $(l));
   x=a.appendChild(a.nextSibling.cloneNode(true));
   x.id="ins_item";
-  (inp=x.childNodes[1]).id="ins_input";
+  (inp=x.childNodes[1]).id="ins_input"; //may not exist
   inp.value=lists[l].actions.typelabel;
   inp.onfocus=function(){inputFocus("ins_input",lists[l].actions.typelabel)};
   inp.onblur=function(){inputBlur("ins_input",lists[l].actions.typelabel)};
@@ -135,12 +140,13 @@ function ins() {
   if (typeof(list.insname=arguments[0])==="string") {
    list.target=$(l).appendChild(document.createElement("li"));
    if (list.insfunc) list.insfunc();
-   if (list.finalfunc) list.finalfunc(list.actions.nextindex)
+   if (list.finalfunc) list.finalfunc(list.actions.length+1)
   }
+  list.actions=null
  }
 }
 function del(a) {
- var i,l=getTarget(this),actions=new List(l),n;
+ var i, l=getTarget(this), actions=new List(l), n;
  for (i=0;i<actions.length;i++) {
   if (typeof a!=="boolean"&&!actions[i].onmousedown) {
    actions[i].firstChild.style.backgroundColor="orange";
@@ -160,7 +166,7 @@ function del(a) {
  }
 }
 function getTarget(n) {
- var l,o;
+ var l;
  while (!((l=n.id) in lists)) {
   for (var n=n.parentNode,o=0;o<n.childNodes.length;o++) {
    if ((l=n.childNodes[o].id) in lists) return l;
@@ -170,6 +176,7 @@ function getTarget(n) {
 }
 
 function menu(a) {
+ var i, link;
  for (i in a.list) {
   link=a.it.appendChild(document.createElement("a"));
   link.className="menuchoice";
@@ -186,11 +193,11 @@ function menu(a) {
  }
  disarmMenu=("disarm" in a)?a.disarm:function() {return false};
  window.onmouseup=function(e) {
-  disarmMenu(e);
-  disarmMenu=null;
+  this.disarmMenu(e);
+  this.disarmMenu=this.onmouseup=null;
+  var i, c, b;
   for (i in (c=(b=$("here").parentNode).childNodes)) if (c[i].firstChild) break;//TODO: use a.list
-  while (b.lastChild!=c[i]) b.removeChild(b.lastChild);
-  this.onmouseup=null
+  while (b.lastChild!=c[i]) b.removeChild(b.lastChild)
  };
  if ("onmenu" in a) a.onmenu();
  if ("timer" in a) setTimeout(a.timer,1000)
