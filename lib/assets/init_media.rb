@@ -26,6 +26,7 @@ module InitMedia
       fields.each do |field, type|
         conn.add_column(table, field, type) unless o.new.respond_to? field.to_sym
         o.class_eval "serialize :#{field}, Array" if type.downcase=="array"
+        o.class_eval "serialize :#{field}, Hash" if type.downcase=="hash"
       end
       o.reset_column_information
     end
@@ -41,6 +42,7 @@ module InitMedia
     } )
     Media.where(:title => title, :data_type => "Mediatype")[0].data.arguments.each do |x|
       Object.const_get(title).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
+      Object.const_get(title).class_eval "serialize :#{x.keys[0]}, Hash" if x.values[0].downcase=="hash"
     end
   end
   module_function :init_obj

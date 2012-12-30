@@ -60,13 +60,14 @@ class MediaController < ApplicationController
 
   def update
     media = Media.update( decode( params[ :id ] ), params[ :media ] )
-    init_obj( media.data_type ) unless Object.const_defined? media.data_type
+#    init_obj( media.data_type ) unless Object.const_defined? media.data_type
     media.data = Object.const_get( media.data_type ).update(
       media.data_id,
       params[ media.data_type.downcase.to_sym ]
     )
     media.save
-    redirect_to :back #use calling url instead?
+    media.data.save
+    redirect_to :back
   end
 
   def new #add :mediatype/new route later
@@ -94,6 +95,7 @@ class MediaController < ApplicationController
     editor.save
     media.data.media[ 0 ] = media
     media.save
+    media.data.save
     redirect_to media_url + "/" + media.url
   end
 

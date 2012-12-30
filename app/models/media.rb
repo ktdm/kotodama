@@ -1,5 +1,6 @@
 class Media < ActiveRecord::Base
   include Url
+  include InitMedia
   belongs_to :data, :polymorphic => true
   belongs_to :mediatype, :class_name => "Media"
   validates :title,
@@ -15,12 +16,11 @@ class Media < ActiveRecord::Base
     media.mediatype.save
   end
   before_save do |media|
+    init_obj( media.data_type ) unless Object.const_defined? media.data_type
     media.mediatype.data.arguments.each do |w|
       media.data.send(w.keys[0]).delete_if {|x| x.empty? }.map! {|x| x.map {|y| {y[0]=>y[1]} } }.flatten! if w.values[0].downcase=="array"
+      #media.data.send(w.keys[0]).compact.inject(:"merge!") if w.values[0].downcase=="hash"
     end
-  end
-  after_save do |media|
-    media.data.save
   end
 end
 
@@ -34,7 +34,7 @@ class Mediatype < ActiveRecord::Base
   protected
   def save_table(action) #separate
     init_obj(media[0].title) unless Object.const_defined? media[0].title
-    basetype = {"Array" => "Text"}
+    basetype = {"Array" => "Text", "Hash" => "Text"}
     T.send(
       action,
       media[0].title.downcase.pluralize.to_sym,
