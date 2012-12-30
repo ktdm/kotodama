@@ -6,7 +6,8 @@ class MediatypeResolver < ActionView::PathResolver
   include Url
 
   def find_templates(name, prefix, partial, details)
-    name = name.sub(/\A(?:.+:)?(.+)\.(.+)\Z/, '\2:\1') unless name.index(".").nil?
+    name.sub!(/\A([^\?]*)(\?.*)\Z/,'\1')
+    name.sub!(/\A(?:.+:)?(.+)\.(.+)\Z/, '\2:\1') unless name.index(".").nil?
     mediatype, name = name.index(":").nil? ? ["", name] : name.split(":")
     if partial or mediatype.downcase == "partial"
       partial = true
