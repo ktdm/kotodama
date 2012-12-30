@@ -266,3 +266,25 @@ function enter(node,e) {
   login(!loginObj.email)
  }
 }
+function ajax(url, params, callback) {
+ var req, a, b="?";
+ if (XMLHttpRequest) req=new XMLHttpRequest();
+ else {
+  var versions=["MSXML2.XmlHttp.5.0", "MSXML2.XmlHttp.4.0", "MSXML2.XmlHttp.3.0", "MSXML2.XmlHttp.2.0", "Microsoft.XmlHttp"], i=0;
+  for(;i<versions.length;i++) {
+   try {
+    req=new ActiveXObject(versions[i]);
+    break
+   }
+   catch(e){}
+  }
+ }
+ for (a in params) b+=a+"="+params[a]+"&"; //sanitise
+ url+=b.slice(0,-1);
+ req.onreadystatechange=function() {
+  if(req.readyState<4||req.status!==200) return;
+  if(req.readyState===4) callback(req)
+ }
+ req.open('GET', url, true);
+ req.send('')
+}
