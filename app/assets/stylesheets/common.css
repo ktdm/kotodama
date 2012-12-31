@@ -152,7 +152,7 @@ a:link {
 .menuchoice {
  display:block
 }
-.menuchoice:hover {/*to do:avoid gui collisions*/
+.menuchoice:hover {
  background-color:orange
 }
 .comment_box {

@@ -12,24 +12,24 @@ function innerFunc(fun) {
  return j.slice(j.indexOf("{")+1,-1);
 }
 function unesc(string){
-  var a=document.createElement('div');
-  a.innerHTML=string;
-  return a.childNodes.length===0?"":a.childNodes[0].nodeValue;
+ var a=document.createElement('div');
+ a.innerHTML=string;
+ return a.childNodes.length===0?"":a.childNodes[0].nodeValue;
 }
 
-function nofollow() {
- var elems=document.getElementsByTagName('a'), i, j="", o;
- for (i in elems) {
-  if (elems[i].href===location.href+"#") {
-   if ((o=elems[i]).onclick) {j=innerFunc(o.onclick)}
-   else if (o.onmousedown) {}
-   else o.style.backgroundColor="yellow";
-   o.onclick=new Function(j+"return false");
-   j=""
-  }
- }
-}
-function viewlinks() { //goes with summary
+//function nofollow() {
+// var elems=document.getElementsByTagName('a'), i, j="", o;
+// for (i in elems) {
+//  if (elems[i].href===location.href+"#") {
+//   if ((o=elems[i]).onclick) {j=innerFunc(o.onclick)}
+//   else if (o.onmousedown) {}
+//   else o.style.backgroundColor="yellow";
+//   o.onclick=new Function(j+"return false");
+//   j=""
+//  }
+// }
+//}
+function viewlinks() { //goes with g/summary
  var n,type;
  for (n=this;n;n=n.parentNode) if (type=n.getAttribute("mediatype")) break;
  menu({
@@ -70,17 +70,13 @@ function inputBlur(id,text) {
  }
 }
 
-function toggle() {//please kill me
- var ar=arguments, a=$(ar[0]).style.display, r;
- if (a==="none") a=false;
- r=["",""];
- switch (ar.length) {
-  case 4: r=[ar[3],"none"];
-  case 3: if ($(ar[2])) $(ar[2]).innerHTML=a?"Render":"Code";
-  case 2: $(ar[1]).style.display=a?r[0]:"none";
-  case 1: if (ar[0]!==ar[1]) $(ar[0]).style.display=a?r[1]:"block";
- }
- return a;
+function toggle(a) {
+ if (typeof a !== "undefined") {if (!pairs[a]) return}
+ else {for (a in pairs) if (this.id==pairs[a].down) {break} else {return}}
+ pairs[a].swap();
+ temp=pairs[a].up;
+ pairs[a].up=pairs[a].down;
+ pairs[a].down=temp
 }
 
 function stringedit(it,start) {
@@ -271,6 +267,7 @@ function enter(node,e) {
   login(!loginObj.email)
  }
 }
+
 function ajax(url, params, callback) {
  var req, a, b="?";
  if (XMLHttpRequest) req=new XMLHttpRequest();
