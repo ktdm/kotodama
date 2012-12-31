@@ -41,6 +41,7 @@ module InitMedia
       has_many :media, :as => :data
     } )
     Media.where(:title => title, :data_type => "Mediatype")[0].data.arguments.each do |x|
+puts "< " + x.inspect + " >"
       Object.const_get(title).class_eval "serialize :#{x[0]}, Array" if x[1]=="Array"
       Object.const_get(title).class_eval "serialize :#{x.keys[0]}, Hash" if x.values[0].downcase=="hash"
     end

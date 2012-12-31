@@ -11,6 +11,11 @@ function innerFunc(fun) {
  var j=fun.toString();
  return j.slice(j.indexOf("{")+1,-1);
 }
+function unesc(string){
+  var a=document.createElement('div');
+  a.innerHTML=string;
+  return a.childNodes.length===0?"":a.childNodes[0].nodeValue;
+}
 
 function nofollow() {
  var elems=document.getElementsByTagName('a'), i, j="", o;
