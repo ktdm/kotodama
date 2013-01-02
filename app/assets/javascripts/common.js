@@ -17,18 +17,6 @@ function unesc(string){
  return a.childNodes.length===0?"":a.childNodes[0].nodeValue;
 }
 
-//function nofollow() {
-// var elems=document.getElementsByTagName('a'), i, j="", o;
-// for (i in elems) {
-//  if (elems[i].href===location.href+"#") {
-//   if ((o=elems[i]).onclick) {j=innerFunc(o.onclick)}
-//   else if (o.onmousedown) {}
-//   else o.style.backgroundColor="yellow";
-//   o.onclick=new Function(j+"return false");
-//   j=""
-//  }
-// }
-//}
 function viewlinks() { //goes with g/summary
  var n,type;
  for (n=this;n;n=n.parentNode) if (type=n.getAttribute("mediatype")) break;
@@ -71,8 +59,12 @@ function inputBlur(id,text) {
 }
 
 function toggle(a) {
+ var x;
  if (typeof a !== "undefined") {if (!pairs[a]) return}
- else {for (a in pairs) if (this.id==pairs[a].down) {break} else {return}}
+ else {
+  for (a in pairs) if (x=(this.id==pairs[a].down)) {break};
+  if (!x) return
+ }
  pairs[a].swap();
  temp=pairs[a].up;
  pairs[a].up=pairs[a].down;
@@ -268,8 +260,8 @@ function enter(node,e) {
  }
 }
 
-function ajax(url, params, callback) {
- var req, a, b="?";
+function ajax(url, params, method, callback) {
+ var req, enc, a, b="?";
  if (XMLHttpRequest) req=new XMLHttpRequest();
  else {
   var versions=["MSXML2.XmlHttp.5.0", "MSXML2.XmlHttp.4.0", "MSXML2.XmlHttp.3.0", "MSXML2.XmlHttp.2.0", "Microsoft.XmlHttp"], i=0;
@@ -281,12 +273,14 @@ function ajax(url, params, callback) {
    catch(e){}
   }
  }
- for (a in params) b+=a+"="+params[a]+"&"; //sanitise
- url+=b.slice(0,-1);
+ for (a in params) b+=a+"="+encodeURIComponent(params[a])+"&";
+ if (method=="POST") enc=b.replace(/%20/g, '+').slice(1,-1)
+ else if (method=="GET") url+=b.slice(0,-1);
  req.onreadystatechange=function() {
   if(req.readyState<4||req.status!==200) return;
   if(req.readyState===4) callback(req)
  }
- req.open('GET', url, true);
- req.send('')
+ req.open(method, url, true);
+ if (method=="POST") req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+ req.send(method=="GET"?'':enc);
 }

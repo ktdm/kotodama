@@ -8,9 +8,9 @@
 <%= csrf_meta_tags %>
 <%= yield :head %>
 <script type="text/javascript">
+// body onload:
 function init() {
  render_login();
-// nofollow();
 <%= yield :onload %>
 }
 </script>

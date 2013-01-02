@@ -19,7 +19,7 @@ class MediatypeResolver < ActionView::PathResolver
 
   def query(path, details, formats)
     p = path.split("/")
-    mediatype = p[-1].index(":").nil? ?
+    mediatype = p[-1].index(":").nil? || !p[0].index("partial:").nil? ?
       Media.find( decode p[0].sub(/^.+:/,"") ).mediatype :
       Media.find( decode p[0].sub(/^.+:/,"") )
     name = ( [formats.first] + [p[-1].sub(/^.+:/,"")].reject {|y| p[-1].index(":").nil? or p[-1].split(":")[-1] == p[0].split(":")[-1] } ) * ":"

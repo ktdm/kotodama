@@ -12,7 +12,7 @@ body {
 body,input,textarea {
  font-family:ProximaNova,Helvetica,Arial,sans-serif
 }
-.section_title,.page_title {
+.page_title {
  font-family:Constantia,Palatino,serif;
 }
 table {
@@ -31,10 +31,14 @@ ul {
 li {
  margin-top:10px
 }
-a:link {
- text-decoration:none
+a {
+ text-decoration:none;
+ color:darkslategrey
 }
-[class~="hide"] {
+a.link { /* you know, for links */
+ color:royalblue
+}
+.hide {
  display:none
 }
 .hr {
@@ -56,14 +60,13 @@ a:link {
 #login_box {
  text-align:center;
  background-color:white;
- min-width:80px;
- padding:10px;
+ min-width:60px;
+ padding:7px;
  border:1px solid black;
  border-style:none none solid solid;
  position:absolute;
- top:0%;
- left:100%;
- margin-left:-101px;
+ top:0px;
+ right:0px;
  z-index:100
 }
 #register,#login_help,#login_form,#reg_form {
@@ -87,23 +90,6 @@ a:link {
  padding:0px;
  font-size:xx-large
 }
-.section_title {
- padding:0px;
- font-size:x-large
-}
-.section_info {
- position:relative;
- cursor:pointer
-}
-[class~="dropdown"] {
- position:absolute;
- top:-0.22em;
- left:0.15em;
- width:400px
-}
-[class~="dropdown"]>textarea {
- width:100%
-}
 .left {
  width:75%
 }
@@ -117,12 +103,6 @@ a:link {
 .left,.middle,.right {
  padding:20px;
  vertical-align:top
-}
-.top {
- padding:5px 20px 5px 20px
-}
-.bottom {
- height:100%
 }
 .summary>* {
  margin:5px
@@ -140,7 +120,7 @@ a:link {
  text-align:right
 }
 .actions>* {
- float:right
+ float:right;
 }
 .actions>*,.data>span,.data>a {
  margin-right:10px;

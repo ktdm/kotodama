@@ -8,8 +8,10 @@ Rubydama01::Application.routes.draw do
             :path => '',
             :only => [:show, :edit, :update],
             :constraints => { :id => /[a-zA-Z0-9_\-]+/ } do
-    get :talk, :on => :member
-    post :create, :on => :member
+    member do
+      get :talk
+      post :create
+    end
   end
 
   get ":context/:id" => "media#show",

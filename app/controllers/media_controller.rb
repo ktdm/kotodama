@@ -20,7 +20,7 @@ class MediaController < ApplicationController
           [ "html", nil ].include? params[ :format ] ) ?
         "application" :
         false
-      ) #layouts... as mediatype?? (Eg "layout:a")
+      ) #layouts are partials!
     else
       @_media = Media.find ( decode params[ :context ] )
       if request.fullpath.index( "." ).nil?
@@ -84,8 +84,8 @@ class MediaController < ApplicationController
   end
 
   def create
+    return show if params[:formats].include? :api or (editor = Media.find( decode params[ :id ] )).data_type == "Api"
     media = Media.new( params[:media] )
-    editor = Media.find( decode params[ :id ] )
     media.mediatype_id = editor.data.mtype
     init_obj( media.mediatype.title ) unless Object.const_defined? media.mediatype.title
     media.data = Object.const_get( media.mediatype.title ).new(
