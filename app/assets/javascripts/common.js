@@ -16,6 +16,11 @@ function unesc(string){
  a.innerHTML=string;
  return a.childNodes.length===0?"":a.childNodes[0].nodeValue;
 }
+function addEvent(elem, event, fn) {
+ elem.addEventListener ?
+  elem.addEventListener(event, fn, false) :
+  elem.attachEvent("on" + event, function () {return(fn.call(elem, window.event))});
+}
 
 function viewlinks() { //goes with g/summary
  var n,type;
@@ -184,13 +189,15 @@ function menu(a) {
    link.onmouseup=a.list[i]
   }
  }
- disarmMenu=("disarm" in a)?a.disarm:function() {return false};
- window.onmouseup=function(e) {
-  this.disarmMenu(e);
-  this.disarmMenu=this.onmouseup=null;
+ disarmFinalise=function() {
   var i, c, b;
   for (i in (c=(b=$("here").parentNode).childNodes)) if (c[i].firstChild) break;//TODO: use a.list
   while (b.lastChild!=c[i]) b.removeChild(b.lastChild)
+ };
+ disarmMenu=("disarm" in a)?a.disarm:disarmFinalise;
+ window.onmouseup=function(e) {
+  this.disarmMenu(e);
+  this.disarmMenu=this.disarmFinalise=this.onmouseup="";
  };
  if ("onmenu" in a) a.onmenu();
  if ("timer" in a) setTimeout(a.timer,1000)
