@@ -192,13 +192,10 @@ function menu(a) {
  disarmFinalise=function() {
   var i, c, b;
   for (i in (c=(b=$("here").parentNode).childNodes)) if (c[i].firstChild) break;//TODO: use a.list
-  while (b.lastChild!=c[i]) b.removeChild(b.lastChild)
+  while (b.lastChild!=c[i]) b.removeChild(b.lastChild);
+  window.disarmFinalise=window.onmouseup=""
  };
- disarmMenu=("disarm" in a)?a.disarm:disarmFinalise;
- window.onmouseup=function(e) {
-  this.disarmMenu(e);
-  this.disarmMenu=this.disarmFinalise=this.onmouseup="";
- };
+ window.onmouseup=("disarm" in a)?a.disarm:disarmFinalise;
  if ("onmenu" in a) a.onmenu();
  if ("timer" in a) setTimeout(a.timer,1000)
 }
